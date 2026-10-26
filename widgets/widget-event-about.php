@@ -1,10 +1,10 @@
 <?php
 /**
- * Elementor widget: single-event "درباره رویداد" — description + axes chips.
+ * Elementor widget: single-event axes chips.
  *
- * Renders the section from the Figma design: a heading with an info badge,
- * the event description (the post's main content), then an optional list of
- * event axes as chips.
+ * Renders only the event's axes as chips. The heading, description and axes
+ * subtitle were removed at the client's request so the widget shows just the
+ * محورهای رویداد chips.
  *
  * @package ShaparakEvents
  */
@@ -68,30 +68,6 @@ class Shaparak_Widget_Event_About extends Shaparak_Widget_Base {
 			)
 		);
 		$this->source_controls();
-		$this->add_control(
-			'title',
-			array(
-				'label'   => 'عنوان بخش',
-				'type'    => \Elementor\Controls_Manager::TEXT,
-				'default' => 'درباره رویداد',
-			)
-		);
-		$this->add_control(
-			'axes_title',
-			array(
-				'label'   => 'عنوان محورها',
-				'type'    => \Elementor\Controls_Manager::TEXT,
-				'default' => 'محورهای رویداد',
-			)
-		);
-		$this->add_control(
-			'show_axes',
-			array(
-				'label'   => 'نمایش محورها',
-				'type'    => \Elementor\Controls_Manager::SWITCHER,
-				'default' => 'yes',
-			)
-		);
 		$this->end_controls_section();
 
 		$this->common_style_controls();
@@ -106,49 +82,20 @@ class Shaparak_Widget_Event_About extends Shaparak_Widget_Base {
 			return;
 		}
 
-		$settings   = $this->get_settings_for_display();
-		$content    = trim( (string) $post->post_content );
-		$axes       = Shaparak_Event_Data::axes( $post->ID );
-		$show_axes  = ! empty( $settings['show_axes'] ) && 'yes' === $settings['show_axes'] && $axes;
-		$has_title  = isset( $settings['title'] ) && '' !== trim( (string) $settings['title'] );
-
-		if ( '' === $content && ! $show_axes && ! $has_title ) {
+		$axes = Shaparak_Event_Data::axes( $post->ID );
+		if ( ! $axes ) {
 			return;
 		}
 
 		$this->open_wrapper();
-		echo '<section class="shaparak-comp shaparak-about">';
-
-		if ( $has_title ) {
+		echo '<section class="shaparak-comp shaparak-about"><div class="shaparak-axes__list">';
+		foreach ( $axes as $axis ) {
 			printf(
-				'<h2 class="shaparak-about__title">%s<span class="shaparak-about__info" aria-hidden="true"><span class="shaparak-icon shaparak-icon--info"></span></span></h2>',
-				esc_html( $settings['title'] )
+				'<span class="shaparak-chip"><span class="shaparak-icon shaparak-icon--check" aria-hidden="true"></span>%s</span>',
+				esc_html( $axis )
 			);
 		}
-
-		if ( '' !== $content ) {
-			echo '<div class="shaparak-about__text">';
-			echo wp_kses_post( wpautop( $content ) );
-			echo '</div>';
-		}
-
-		if ( $show_axes ) {
-			$axes_title      = isset( $settings['axes_title'] ) ? (string) $settings['axes_title'] : '';
-			$has_axes_title  = '' !== trim( $axes_title );
-			if ( $has_axes_title ) {
-				printf( '<h3 class="shaparak-about__subtitle">%s</h3>', esc_html( $axes_title ) );
-			}
-			echo '<div class="shaparak-axes__list">';
-			foreach ( $axes as $axis ) {
-				printf(
-					'<span class="shaparak-chip"><span class="shaparak-icon shaparak-icon--check" aria-hidden="true"></span>%s</span>',
-					esc_html( $axis )
-				);
-			}
-			echo '</div>';
-		}
-
-		echo '</section>';
+		echo '</div></section>';
 		echo '</div>';
 	}
 }
