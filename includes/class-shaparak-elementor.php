@@ -154,6 +154,8 @@ class Shaparak_Elementor {
 			'widget-event-report.php'      => 'Shaparak_Widget_Event_Report',
 			'widget-event-axes.php'        => 'Shaparak_Widget_Event_Axes',
 			'widget-event-about.php'        => 'Shaparak_Widget_Event_About',
+			'widget-event-reports.php'      => 'Shaparak_Widget_Event_Reports',
+			'widget-event-filters.php'      => 'Shaparak_Widget_Event_Filters',
 		);
 
 		// Optional whitelist: define( 'SHAPARAK_WIDGETS_ONLY', 'widget-events-list,widget-event-hero' );
