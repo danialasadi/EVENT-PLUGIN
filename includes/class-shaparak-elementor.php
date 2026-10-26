@@ -24,10 +24,20 @@ class Shaparak_Elementor {
 	 * Hooks.
 	 */
 	public static function init() {
+		// Temporary diagnostics: define in wp-config.php to bisect an editor panel that hangs.
+		if ( defined( 'SHAPARAK_DISABLE_ELEMENTOR' ) && SHAPARAK_DISABLE_ELEMENTOR ) {
+			return;
+		}
+
 		add_action( 'elementor/categories/register', array( __CLASS__, 'register_category' ) );
-		add_action( 'elementor/widgets/register', array( __CLASS__, 'register_widgets' ) );
 		add_filter( 'elementor/editor/allowed_attributes', array( __CLASS__, 'allow_attributes' ) );
 		add_filter( 'script_loader_src', array( __CLASS__, 'local_ace_src' ), 20, 2 );
+
+		if ( defined( 'SHAPARAK_DISABLE_WIDGETS' ) && SHAPARAK_DISABLE_WIDGETS ) {
+			return;
+		}
+
+		add_action( 'elementor/widgets/register', array( __CLASS__, 'register_widgets' ) );
 	}
 
 	/**
