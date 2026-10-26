@@ -126,6 +126,14 @@ class Shaparak_Elementor {
 	 * @param \Elementor\Widget_Manager $widgets Widget manager.
 	 */
 	public static function register_widgets( $widgets ) {
+		// Diagnostic: a single metadata-only widget, no controls, ASCII strings.
+		if ( defined( 'SHAPARAK_MINIMAL_WIDGET' ) && SHAPARAK_MINIMAL_WIDGET ) {
+			require_once SHAPARAK_EVENTS_PATH . 'widgets/widget-minimal.php';
+			$widgets->register( new Shaparak_Widget_Minimal() );
+			error_log( '[shaparak-trace] minimal widget registered' );
+			return;
+		}
+
 		$files = array(
 			'widget-events-list.php'       => 'Shaparak_Widget_Events_List',
 			'widget-event-featured.php'    => 'Shaparak_Widget_Event_Featured',
