@@ -742,6 +742,11 @@
 	gap: 16px;
 }
 
+/* Ranks ۱–۳ stay on a single row, as in the design. */
+.shaparak-prizes__grid--three {
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .shaparak-prize {
 	text-align: center;
 	background: var(--shaparak-page);
@@ -1580,6 +1585,10 @@
 @media (max-width: 768px) {
 	.shaparak-comp {
 		padding: 18px;
+	}
+
+	.shaparak-prizes__grid--three {
+		grid-template-columns: 1fr;
 	}
 
 	.shaparak-featured__title,

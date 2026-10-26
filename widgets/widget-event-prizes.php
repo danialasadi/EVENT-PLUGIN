@@ -86,8 +86,14 @@ class Shaparak_Widget_Event_Prizes extends Shaparak_Widget_Base {
 
 		$ranks = self::ranks();
 
+		// Three ranks render as one row of three, as in the design.
+		$grid_class = 3 === count( $prizes ) ? ' shaparak-prizes__grid--three' : '';
+
 		$this->open_wrapper();
-		echo '<section class="shaparak-comp shaparak-prizes"><div class="shaparak-prizes__grid">';
+		printf(
+			'<section class="shaparak-comp shaparak-prizes"><div class="shaparak-prizes__grid%s">',
+			esc_attr( $grid_class )
+		);
 		foreach ( $prizes as $i => $prize ) {
 			$rank   = isset( $ranks[ $i ] ) ? $ranks[ $i ] : $ranks[ count( $ranks ) - 1 ];
 			$number = $i + 1;
