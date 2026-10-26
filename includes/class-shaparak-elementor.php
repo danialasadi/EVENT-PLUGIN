@@ -30,6 +30,9 @@ class Shaparak_Elementor {
 		}
 
 		if ( ! ( defined( 'SHAPARAK_DISABLE_CATEGORY' ) && SHAPARAK_DISABLE_CATEGORY ) ) {
+			// Documented hook (Elementor <= 4.x): receives the elements manager.
+			add_action( 'elementor/elements/categories_registered', array( __CLASS__, 'register_category' ) );
+			// Newer alias: receives the widget manager.
 			add_action( 'elementor/categories/register', array( __CLASS__, 'register_category' ) );
 		}
 
@@ -91,10 +94,20 @@ class Shaparak_Elementor {
 	/**
 	 * Register our widget category.
 	 *
-	 * @param \Elementor\Widget_Manager $widgets Widget manager.
+	 * Hooked to both `elementor/elements/categories_registered` and
+	 * `elementor/categories/register`; each fires with a manager object that
+	 * exposes add_category(). Without this, widgets returning the category id
+	 * would point at a category that does not exist and the editor panel can
+	 * stall while grouping them.
+	 *
+	 * @param object $manager Elements/widget manager.
 	 */
-	public static function register_category( $widgets ) {
-		$widgets->add_category(
+	public static function register_category( $manager ) {
+		if ( ! is_object( $manager ) || ! method_exists( $manager, 'add_category' ) ) {
+			return;
+		}
+
+		$manager->add_category(
 			self::CATEGORY,
 			array(
 				'title' => 'شاپرک · رویدادها',
