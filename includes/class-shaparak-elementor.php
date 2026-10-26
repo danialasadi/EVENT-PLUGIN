@@ -29,9 +29,15 @@ class Shaparak_Elementor {
 			return;
 		}
 
-		add_action( 'elementor/categories/register', array( __CLASS__, 'register_category' ) );
+		if ( ! ( defined( 'SHAPARAK_DISABLE_CATEGORY' ) && SHAPARAK_DISABLE_CATEGORY ) ) {
+			add_action( 'elementor/categories/register', array( __CLASS__, 'register_category' ) );
+		}
+
 		add_filter( 'elementor/editor/allowed_attributes', array( __CLASS__, 'allow_attributes' ) );
-		add_filter( 'script_loader_src', array( __CLASS__, 'local_ace_src' ), 20, 2 );
+
+		if ( ! ( defined( 'SHAPARAK_DISABLE_ACE' ) && SHAPARAK_DISABLE_ACE ) ) {
+			add_filter( 'script_loader_src', array( __CLASS__, 'local_ace_src' ), 20, 2 );
+		}
 
 		if ( defined( 'SHAPARAK_DISABLE_WIDGETS' ) && SHAPARAK_DISABLE_WIDGETS ) {
 			return;
