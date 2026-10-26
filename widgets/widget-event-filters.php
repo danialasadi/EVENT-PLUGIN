@@ -103,6 +103,19 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 				'title_field' => '{{{ label }}}',
 				'fields'      => array(
 					array(
+						'name'    => 'value',
+						'label'   => 'مقدار (نوع رویداد)',
+						'type'    => \Elementor\Controls_Manager::SELECT,
+						'options' => array(
+							''           => '—',
+							'national'   => 'ملی (national)',
+							'provincial' => 'استانی (provincial)',
+							'meeting'    => 'نشست (meeting)',
+							'online'     => 'آنلاین (online)',
+						),
+						'default' => 'national',
+					),
+					array(
 						'name'  => 'label',
 						'label' => 'عنوان',
 						'type'  => \Elementor\Controls_Manager::TEXT,
@@ -114,10 +127,10 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 					),
 				),
 				'default'     => array(
-					array( 'label' => 'رویدادهای ملی', 'on' => 'yes' ),
-					array( 'label' => 'رویدادهای استانی', 'on' => 'yes' ),
-					array( 'label' => 'نشست‌ها', 'on' => 'yes' ),
-					array( 'label' => 'فقط آنلاین', 'on' => '' ),
+					array( 'value' => 'national', 'label' => 'رویدادهای ملی', 'on' => 'yes' ),
+					array( 'value' => 'provincial', 'label' => 'رویدادهای استانی', 'on' => 'yes' ),
+					array( 'value' => 'meeting', 'label' => 'نشست‌ها', 'on' => 'yes' ),
+					array( 'value' => 'online', 'label' => 'فقط آنلاین', 'on' => '' ),
 				),
 			)
 		);
@@ -137,7 +150,7 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 		$types   = isset( $s['types'] ) && is_array( $s['types'] ) ? $s['types'] : array();
 
 		$this->open_wrapper();
-		echo '<section class="shaparak-comp shaparak-filters">';
+		echo '<section class="shaparak-comp shaparak-filters" data-se-filters>';
 
 		if ( '' !== $heading ) {
 			printf(
@@ -150,7 +163,7 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 			$default_label = isset( $s['province_label'] ) ? (string) $s['province_label'] : 'همه استان‌ها';
 			?>
 			<div class="shaparak-filters__province">
-				<select class="shaparak-filters__select">
+				<select class="shaparak-filters__select" data-se-filter-province>
 					<option value=""><?php echo esc_html( $default_label ); ?></option>
 					<?php foreach ( self::provinces() as $province ) : ?>
 						<option value="<?php echo esc_attr( $province ); ?>"><?php echo esc_html( $province ); ?></option>
@@ -165,6 +178,7 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 			echo '<ul class="shaparak-filters__list">';
 			foreach ( $types as $item ) {
 				$label = isset( $item['label'] ) ? trim( (string) $item['label'] ) : '';
+				$value = isset( $item['value'] ) ? sanitize_html_class( (string) $item['value'] ) : '';
 				if ( '' === $label ) {
 					continue;
 				}
@@ -172,7 +186,7 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 				?>
 				<li class="shaparak-filters__item">
 					<label class="shaparak-check">
-						<input type="checkbox" <?php checked( $on ); ?>>
+						<input type="checkbox" data-se-filter-type="<?php echo esc_attr( $value ); ?>" <?php checked( $on ); ?>>
 						<span class="shaparak-check__box"><span class="shaparak-icon shaparak-icon--check" aria-hidden="true"></span></span>
 						<span class="shaparak-check__label"><?php echo esc_html( $label ); ?></span>
 					</label>

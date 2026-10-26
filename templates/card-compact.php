@@ -21,7 +21,7 @@ $state = Shaparak_Query::state( $id );
 $link  = Shaparak_Event_Data::text( $id, 'link' );
 $url   = $link ? $link : get_permalink( $id );
 ?>
-<article class="shaparak-compact">
+<article class="shaparak-compact" data-se-type="<?php echo esc_attr( Shaparak_Event_Data::type( $id ) ); ?>" data-se-city="<?php echo esc_attr( Shaparak_Event_Data::text( $id, 'city' ) ); ?>>
 	<div class="shaparak-compact__date">
 		<strong><?php echo esc_html( $badge['day'] ); ?></strong>
 		<span><?php echo esc_html( $badge['month'] ); ?></span>

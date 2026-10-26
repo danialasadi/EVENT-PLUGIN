@@ -1904,3 +1904,7 @@
 		font-size: 19px;
 	}
 }
+
+/* Filter panel: hide event cards that do not match the active filters */
+.shaparak-card.is-filtered,
+.shaparak-compact.is-filtered { display: none !important; }
