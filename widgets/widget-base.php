@@ -17,9 +17,17 @@ abstract class Shaparak_Widget_Base extends \Elementor\Widget_Base {
 	/**
 	 * Widget category (our own Elementor panel section).
 	 *
+	 * Diagnostic: define( 'SHAPARAK_BUILTIN_CATEGORY', 'basic' ) in wp-config.php
+	 * to point every widget at a built-in category instead of ours, which tells
+	 * whether the custom category is what stalls the panel.
+	 *
 	 * @return array
 	 */
 	public function get_categories() {
+		if ( defined( 'SHAPARAK_BUILTIN_CATEGORY' ) && SHAPARAK_BUILTIN_CATEGORY ) {
+			return array( sanitize_key( SHAPARAK_BUILTIN_CATEGORY ) );
+		}
+
 		return array( Shaparak_Elementor::CATEGORY );
 	}
 
