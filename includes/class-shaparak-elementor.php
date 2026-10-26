@@ -153,6 +153,7 @@ class Shaparak_Elementor {
 			'widget-event-venue.php'       => 'Shaparak_Widget_Event_Venue',
 			'widget-event-report.php'      => 'Shaparak_Widget_Event_Report',
 			'widget-event-axes.php'        => 'Shaparak_Widget_Event_Axes',
+			'widget-event-about.php'        => 'Shaparak_Widget_Event_About',
 		);
 
 		// Optional whitelist: define( 'SHAPARAK_WIDGETS_ONLY', 'widget-events-list,widget-event-hero' );

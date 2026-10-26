@@ -31,7 +31,6 @@ class Shaparak_Meta {
 		'directions'   => '_event_directions',
 		'link'         => '_event_link',
 		'featured'     => '_event_featured',
-		'axes'         => '_event_axes',
 		'report'       => '_event_report',
 		'highlights'   => '_event_highlights',
 		'report_pdf'   => '_event_report_pdf',
@@ -46,6 +45,7 @@ class Shaparak_Meta {
 		'faq'     => '_event_faq',
 		'winners' => '_event_winners',
 		'stats'   => '_event_stats',
+		'axes'    => '_event_axes',
 	);
 
 	/**
@@ -169,6 +169,13 @@ class Shaparak_Meta {
 				array(
 					'name'  => 'label',
 					'label' => 'برچسب (تیم)',
+					'type'  => 'text',
+				),
+			),
+			'axes'    => array(
+				array(
+					'name'  => 'title',
+					'label' => 'عنوان محور',
 					'type'  => 'text',
 				),
 			),
@@ -308,9 +315,9 @@ class Shaparak_Meta {
 		<!-- متن -->
 		<div class="se-pane" data-se-pane="content">
 			<div class="se-field">
-				<label>محورهای رویداد (هر محور در یک خط)</label>
-				<textarea rows="5" name="<?php echo esc_attr( self::$fields['axes'] ); ?>"><?php echo esc_textarea( $get( 'axes' ) ); ?></textarea>
-				<div class="se-hint">به صورت چیپ نمایش داده می‌شود.</div>
+				<label>محورهای رویداد</label>
+				<?php self::repeater( 'axes', $post->ID ); ?>
+				<div class="se-hint">هر محور یک ردیف است و به صورت چیپ نمایش داده می‌شود.</div>
 			</div>
 			<div class="se-field">
 				<label>گزارش رویداد (برای رویدادهای برگزار شده)</label>
@@ -357,7 +364,10 @@ class Shaparak_Meta {
 	 */
 	private static function repeater( $key, $post_id ) {
 		$fields = self::block_fields( $key );
-		$rows   = Shaparak_Event_Data::rows( $post_id, $key );
+		// Axes may still hold legacy one-per-line text; seed rows from it.
+		$rows   = ( 'axes' === $key )
+			? Shaparak_Event_Data::axes_rows( $post_id )
+			: Shaparak_Event_Data::rows( $post_id, $key );
 		$name   = self::$blocks[ $key ];
 
 		echo '<div class="se-repeater" data-se-repeater="' . esc_attr( $key ) . '">';
@@ -577,7 +587,6 @@ class Shaparak_Meta {
 			}
 		}
 		update_post_meta( $post_id, self::$fields['map'], sanitize_text_field( $get( self::$fields['map'] ) ) );
-		update_post_meta( $post_id, self::$fields['axes'], wp_kses_post( $get( self::$fields['axes'] ) ) );
 		update_post_meta( $post_id, self::$fields['report'], wp_kses_post( $get( self::$fields['report'] ) ) );
 		update_post_meta( $post_id, self::$fields['highlights'], wp_kses_post( $get( self::$fields['highlights'] ) ) );
 		update_post_meta( $post_id, self::$fields['featured'], isset( $_POST[ self::$fields['featured'] ] ) ? '1' : '' );

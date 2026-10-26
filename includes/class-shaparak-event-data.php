@@ -120,13 +120,38 @@ class Shaparak_Event_Data {
 	}
 
 	/**
+	 * Event axes as repeater rows, seeding from the legacy one-per-line format.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return array<int,array<string,string>>
+	 */
+	public static function axes_rows( $post_id ) {
+		$rows = self::rows( $post_id, 'axes' );
+		if ( $rows ) {
+			return $rows;
+		}
+		$out = array();
+		foreach ( self::lines( $post_id, 'axes' ) as $line ) {
+			$out[] = array( 'title' => $line );
+		}
+		return $out;
+	}
+
+	/**
 	 * Event axes (chips).
 	 *
 	 * @param int $post_id Post ID.
 	 * @return string[]
 	 */
 	public static function axes( $post_id ) {
-		return self::lines( $post_id, 'axes' );
+		$out = array();
+		foreach ( self::axes_rows( $post_id ) as $row ) {
+			$title = isset( $row['title'] ) ? trim( (string) $row['title'] ) : '';
+			if ( '' !== $title ) {
+				$out[] = $title;
+			}
+		}
+		return $out;
 	}
 
 	/**
