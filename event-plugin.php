@@ -32,6 +32,7 @@ require_once SHAPARAK_EVENTS_PATH . 'includes/class-shaparak-template.php';
 require_once SHAPARAK_EVENTS_PATH . 'includes/class-shaparak-shortcodes.php';
 require_once SHAPARAK_EVENTS_PATH . 'includes/class-shaparak-assets.php';
 require_once SHAPARAK_EVENTS_PATH . 'includes/class-shaparak-elementor.php';
+require_once SHAPARAK_EVENTS_PATH . 'includes/class-shaparak-compat.php';
 
 /**
  * Main plugin container.
@@ -61,6 +62,7 @@ final class Shaparak_Events {
 		Shaparak_Shortcodes::init();
 		Shaparak_Assets::init();
 		Shaparak_Elementor::init();
+		Shaparak_Compat::init();
 
 		add_action( 'init', array( $this, 'load_textdomain' ) );
 	}
