@@ -110,7 +110,7 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 					array(
 						'name'  => 'on',
 						'label' => 'پیش‌فرض: انتخاب‌شده',
-						'type'  => \Elementor\Controls_Manager::CHECKBOX,
+						'type'  => \Elementor\Controls_Manager::SWITCHER,
 					),
 				),
 				'default'     => array(
