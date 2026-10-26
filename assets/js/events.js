@@ -64,41 +64,9 @@
 		});
 	}
 
-	function filters() {
-		var panels = document.querySelectorAll('[data-se-filters]');
-		if (!panels.length) return;
-
-		function apply() {
-			var types = [];
-			var province = '';
-			Array.prototype.forEach.call(panels, function (panel) {
-				Array.prototype.forEach.call(panel.querySelectorAll('[data-se-filter-type]'), function (cb) {
-					var v = cb.getAttribute('data-se-filter-type');
-					if (cb.checked && v) types.push(v);
-				});
-				var sel = panel.querySelector('[data-se-filter-province]');
-				if (sel && sel.value) province = sel.value;
-			});
-
-			var typeActive = types.length > 0;
-			Array.prototype.forEach.call(document.querySelectorAll('[data-se-type]'), function (card) {
-				var show = true;
-				var ctype = card.getAttribute('data-se-type') || '';
-				if (typeActive && types.indexOf(ctype) === -1) show = false;
-				if (province && (card.getAttribute('data-se-city') || '') !== province) show = false;
-				card.classList.toggle('is-filtered', !show);
-			});
-		}
-
-		document.addEventListener('change', function (e) {
-			if (e.target && e.target.closest && e.target.closest('[data-se-filters]')) apply();
-		});
-	}
-
 	document.addEventListener('DOMContentLoaded', function () {
 		tick();
 		setInterval(tick, 1000);
 		toolbar();
-		filters();
 	});
 })();

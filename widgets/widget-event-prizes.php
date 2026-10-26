@@ -79,23 +79,16 @@ class Shaparak_Widget_Event_Prizes extends Shaparak_Widget_Base {
 			return;
 		}
 
-		// Hidden once the event is over.
-		if ( 'past' === Shaparak_Query::state( $post->ID ) ) {
-			return;
-		}
-
 		$ranks = self::ranks();
 
 		$this->open_wrapper();
 		echo '<section class="shaparak-comp shaparak-prizes"><div class="shaparak-prizes__grid">';
 		foreach ( $prizes as $i => $prize ) {
-			$rank   = isset( $ranks[ $i ] ) ? $ranks[ $i ] : $ranks[ count( $ranks ) - 1 ];
-			$number = $i + 1;
+			$rank = isset( $ranks[ $i ] ) ? $ranks[ $i ] : $ranks[ count( $ranks ) - 1 ];
 			printf(
-				'<article class="shaparak-prize %1$s"><span class="shaparak-prize__rank shaparak-prize__rank--%2$d" aria-hidden="true">%3$s</span><span class="shaparak-prize__label">%4$s</span><strong class="shaparak-prize__amount">%5$s</strong><span class="shaparak-prize__desc">%6$s</span></article>',
+				'<article class="shaparak-prize %s"><span class="shaparak-prize__rank shaparak-prize__rank--%2$d" aria-hidden="true"></span><span class="shaparak-prize__label">%3$s</span><strong class="shaparak-prize__amount">%4$s</strong><span class="shaparak-prize__desc">%5$s</span></article>',
 				0 === $i ? 'is-first' : '',
-				$number,
-				esc_html( Shaparak_Jalali::to_fa( $number ) ),
+				( $i + 1 ),
 				esc_html( $rank ),
 				esc_html( $prize['amount'] ),
 				esc_html( $prize['desc'] )

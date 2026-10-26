@@ -28,7 +28,7 @@ $url     = $link ? $link : get_permalink( $id );
 $is_past = 'past' === $state;
 $classes = 'shaparak-card shaparak-card--' . ( $layout ? $layout : 'grid' ) . ( $is_past ? ' is-past' : '' );
 ?>
-<article <?php post_class( $classes, $id ); ?> data-se-type="<?php echo esc_attr( Shaparak_Event_Data::type( $id ) ); ?>" data-se-city="<?php echo esc_attr( Shaparak_Event_Data::text( $id, 'city' ) ); ?>>
+<article <?php post_class( $classes, $id ); ?>>
 	<a class="shaparak-card__media" href="<?php echo esc_url( $url ); ?>" tabindex="-1" aria-hidden="true">
 		<?php if ( $cover ) : ?>
 			<img src="<?php echo esc_url( $cover ); ?>" alt="<?php echo esc_attr( get_the_title( $id ) ); ?>" loading="lazy">

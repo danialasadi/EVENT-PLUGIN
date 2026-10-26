@@ -26,7 +26,6 @@ class Shaparak_Event_Data {
 		return array(
 			'venue'      => '_event_venue',
 			'city'       => '_event_city',
-			'type'       => '_event_type',
 			'address'    => '_event_address',
 			'map'        => '_event_map',
 			'directions' => '_event_directions',
@@ -71,16 +70,6 @@ class Shaparak_Event_Data {
 	 */
 	public static function text( $post_id, $key ) {
 		return trim( self::raw( $post_id, $key ) );
-	}
-
-	/**
-	 * Event type slug (national, provincial, meeting, online).
-	 *
-	 * @param int $post_id Post ID.
-	 * @return string
-	 */
-	public static function type( $post_id ) {
-		return self::text( $post_id, 'type' );
 	}
 
 	/**

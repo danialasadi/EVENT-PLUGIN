@@ -26,7 +26,6 @@ class Shaparak_Meta {
 		'end'          => '_event_end',
 		'venue'        => '_event_venue',
 		'city'         => '_event_city',
-		'type'         => '_event_type',
 		'address'      => '_event_address',
 		'map'          => '_event_map',
 		'directions'   => '_event_directions',
@@ -264,17 +263,6 @@ class Shaparak_Meta {
 				<div class="se-field">
 					<label>شهر</label>
 					<input type="text" name="<?php echo esc_attr( self::$fields['city'] ); ?>" value="<?php echo esc_attr( $get( 'city' ) ); ?>" placeholder="مشهد">
-				</div>
-				<div class="se-field">
-					<label>نوع رویداد</label>
-					<select name="<?php echo esc_attr( self::$fields['type'] ); ?>">
-						<option value="" <?php selected( $get( 'type' ), '' ); ?>>—</option>
-						<option value="national" <?php selected( $get( 'type' ), 'national' ); ?>>ملی</option>
-						<option value="provincial" <?php selected( $get( 'type' ), 'provincial' ); ?>>استانی</option>
-						<option value="meeting" <?php selected( $get( 'type' ), 'meeting' ); ?>>نشست</option>
-						<option value="online" <?php selected( $get( 'type' ), 'online' ); ?>>آنلاین</option>
-					</select>
-					<div class="se-hint">برای فیلتر پنل «فیلترها» استفاده می‌شود</div>
 				</div>
 				<div class="se-field">
 					<label>نشانی کامل</label>
@@ -592,7 +580,7 @@ class Shaparak_Meta {
 		}
 
 		// --- simple fields ----------------------------------------------
-		foreach ( array( 'venue', 'city', 'type', 'address', 'link', 'directions', 'report_pdf' ) as $key ) {
+		foreach ( array( 'venue', 'city', 'address', 'link', 'directions', 'report_pdf' ) as $key ) {
 			$field = isset( self::$fields[ $key ] ) ? self::$fields[ $key ] : '';
 			if ( $field ) {
 				update_post_meta( $post_id, $field, sanitize_text_field( $get( $field ) ) );
