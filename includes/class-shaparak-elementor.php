@@ -27,6 +27,40 @@ class Shaparak_Elementor {
 		add_action( 'elementor/categories/register', array( __CLASS__, 'register_category' ) );
 		add_action( 'elementor/widgets/register', array( __CLASS__, 'register_widgets' ) );
 		add_filter( 'elementor/editor/allowed_attributes', array( __CLASS__, 'allow_attributes' ) );
+		add_filter( 'script_loader_src', array( __CLASS__, 'local_ace_src' ), 20, 2 );
+	}
+
+	/**
+	 * Serve the Ace code editor from this plugin instead of cdn.jsdelivr.net.
+	 *
+	 * The Elementor editor registers ace.min.js / ext-language_tools.js from
+	 * jsDelivr, which is unreachable from Iran. Two blocking requests then fail
+	 * with ERR_CONNECTION_RESET and the editor stalls on the loading screen.
+	 * Any ace-builds file shipped in assets/ace/ is rewritten to a local URL;
+	 * everything else (versions, modes we do not ship) keeps its original URL.
+	 *
+	 * @param string $src   Script URL.
+	 * @param string $handle Script handle.
+	 * @return string
+	 */
+	public static function local_ace_src( $src, $handle = '' ) {
+		if ( ! is_string( $src ) || false === strpos( $src, 'ace-builds' ) ) {
+			return $src;
+		}
+
+		$marker = 'src-min-noconflict/';
+		$pos    = strpos( $src, $marker );
+		if ( false === $pos ) {
+			return $src;
+		}
+
+		$file = preg_replace( '/\?.*$/', '', substr( $src, $pos + strlen( $marker ) ) );
+		$path = SHAPARAK_EVENTS_PATH . 'assets/ace/' . $file;
+		if ( ! $file || ! file_exists( $path ) ) {
+			return $src;
+		}
+
+		return SHAPARAK_EVENTS_URL . 'assets/ace/' . $file . '?ver=1.43.2';
 	}
 
 	/**
