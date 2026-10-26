@@ -82,8 +82,6 @@ class Shaparak_Widget_Event_Hero extends Shaparak_Widget_Base {
 				),
 			)
 		);
-		$this->end_controls_section();
-
 		$this->add_control(
 			'hero_height',
 			array(
@@ -95,6 +93,8 @@ class Shaparak_Widget_Event_Hero extends Shaparak_Widget_Base {
 				),
 			)
 		);
+
+		$this->end_controls_section();
 
 		$this->common_style_controls();
 	}
