@@ -104,7 +104,6 @@ class Shaparak_Elementor {
 	 */
 	public static function register_category( $manager ) {
 		if ( ! is_object( $manager ) || ! method_exists( $manager, 'add_category' ) ) {
-			error_log( '[shaparak-trace] category skipped, manager=' . ( is_object( $manager ) ? get_class( $manager ) : gettype( $manager ) ) . ' hook=' . current_filter() );
 			return;
 		}
 
@@ -116,8 +115,6 @@ class Shaparak_Elementor {
 			)
 		);
 
-		// Temporary breadcrumb: proves which hook (if any) delivered a manager.
-		error_log( '[shaparak-trace] category via ' . current_filter() . ' (' . get_class( $manager ) . ')' );
 	}
 
 	/**
@@ -130,7 +127,6 @@ class Shaparak_Elementor {
 		if ( defined( 'SHAPARAK_MINIMAL_WIDGET' ) && SHAPARAK_MINIMAL_WIDGET ) {
 			require_once SHAPARAK_EVENTS_PATH . 'widgets/widget-minimal.php';
 			$widgets->register( new Shaparak_Widget_Minimal() );
-			error_log( '[shaparak-trace] minimal widget registered' );
 			return;
 		}
 
@@ -172,18 +168,13 @@ class Shaparak_Elementor {
 			if ( ! file_exists( $path ) ) {
 				continue;
 			}
-			// Temporary breadcrumb: shows in wp-content/debug.log where registration stops.
-			error_log( '[shaparak-trace] require ' . $file );
 			require_once $path;
 			if ( class_exists( $class ) ) {
-				error_log( '[shaparak-trace] new ' . $class );
 				$widget = new $class();
-				error_log( '[shaparak-trace] register ' . $class );
 				$widgets->register( $widget );
 			}
 		}
 
-		error_log( '[shaparak-trace] widget registration finished' );
 	}
 
 	/**
