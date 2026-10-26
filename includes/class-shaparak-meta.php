@@ -44,7 +44,6 @@ class Shaparak_Meta {
 		'people'  => '_event_people',
 		'faq'     => '_event_faq',
 		'winners' => '_event_winners',
-		'stats'   => '_event_stats',
 		'axes'    => '_event_axes',
 	);
 
@@ -158,18 +157,6 @@ class Shaparak_Meta {
 					'name'  => 'image',
 					'label' => 'تصویر',
 					'type'  => 'media',
-				),
-			),
-			'stats'   => array(
-				array(
-					'name'  => 'value',
-					'label' => 'عدد (۲۸)',
-					'type'  => 'text',
-				),
-				array(
-					'name'  => 'label',
-					'label' => 'برچسب (تیم)',
-					'type'  => 'text',
 				),
 			),
 			'axes'    => array(
@@ -335,10 +322,6 @@ class Shaparak_Meta {
 
 		<!-- گالری -->
 		<div class="se-pane" data-se-pane="media">
-			<div class="se-block">
-				<div class="se-block__head">آمار رویداد (برگزار شده)</div>
-				<?php self::repeater( 'stats', $post->ID ); ?>
-			</div>
 			<div class="se-block">
 				<div class="se-block__head">گالری تصاویر</div>
 				<div class="se-gallery" data-se-gallery>
