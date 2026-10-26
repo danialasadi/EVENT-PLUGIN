@@ -135,11 +135,18 @@ class Shaparak_Elementor {
 			if ( ! file_exists( $path ) ) {
 				continue;
 			}
+			// Temporary breadcrumb: shows in wp-content/debug.log where registration stops.
+			error_log( '[shaparak-trace] require ' . $file );
 			require_once $path;
 			if ( class_exists( $class ) ) {
-				$widgets->register( new $class() );
+				error_log( '[shaparak-trace] new ' . $class );
+				$widget = new $class();
+				error_log( '[shaparak-trace] register ' . $class );
+				$widgets->register( $widget );
 			}
 		}
+
+		error_log( '[shaparak-trace] widget registration finished' );
 	}
 
 	/**
