@@ -130,7 +130,16 @@ class Shaparak_Elementor {
 			'widget-event-axes.php'        => 'Shaparak_Widget_Event_Axes',
 		);
 
+		// Optional whitelist: define( 'SHAPARAK_WIDGETS_ONLY', 'widget-events-list,widget-event-hero' );
+		$only = array();
+		if ( defined( 'SHAPARAK_WIDGETS_ONLY' ) && SHAPARAK_WIDGETS_ONLY ) {
+			$only = array_filter( array_map( 'trim', explode( ',', (string) SHAPARAK_WIDGETS_ONLY ) ) );
+		}
+
 		foreach ( $files as $file => $class ) {
+			if ( $only && ! in_array( basename( $file, '.php' ), $only, true ) ) {
+				continue;
+			}
 			$path = SHAPARAK_EVENTS_PATH . 'widgets/' . $file;
 			if ( ! file_exists( $path ) ) {
 				continue;
