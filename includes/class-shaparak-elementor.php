@@ -104,6 +104,7 @@ class Shaparak_Elementor {
 	 */
 	public static function register_category( $manager ) {
 		if ( ! is_object( $manager ) || ! method_exists( $manager, 'add_category' ) ) {
+			error_log( '[shaparak-trace] category skipped, manager=' . ( is_object( $manager ) ? get_class( $manager ) : gettype( $manager ) ) . ' hook=' . current_filter() );
 			return;
 		}
 
@@ -114,6 +115,9 @@ class Shaparak_Elementor {
 				'icon'  => 'eicon-calendar',
 			)
 		);
+
+		// Temporary breadcrumb: proves which hook (if any) delivered a manager.
+		error_log( '[shaparak-trace] category via ' . current_filter() . ' (' . get_class( $manager ) . ')' );
 	}
 
 	/**
