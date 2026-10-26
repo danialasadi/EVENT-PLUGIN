@@ -1776,12 +1776,20 @@
 }
 
 /* --------------------------------------------------------- filters */
+/* Card look from the design: white, big radius, soft shadow. */
+.shaparak-filters {
+	background: var(--shaparak-surface);
+	border-radius: 24px;
+	box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+	padding: 22px;
+}
+
 .shaparak-filters__head {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	margin: 0 0 16px;
-	font-size: 18px;
+	margin: 0 0 18px;
+	font-size: 20px;
 	font-weight: 800;
 	color: var(--shaparak-navy);
 }
@@ -1794,21 +1802,22 @@
 
 .shaparak-filters__province {
 	position: relative;
-	margin-bottom: 16px;
+	margin-bottom: 10px;
 }
 
 .shaparak-filters__select {
 	width: 100%;
 	appearance: none;
 	-webkit-appearance: none;
-	height: 48px;
+	height: 54px;
 	border: 1px solid var(--shaparak-line);
-	border-radius: var(--shaparak-radius-sm);
+	border-radius: 16px;
 	background: #fff;
-	padding: 0 16px 0 40px;
+	box-shadow: 0 6px 16px rgba(15, 23, 42, 0.05);
+	padding: 0 18px 0 44px;
 	font-family: inherit;
-	font-size: 14px;
-	font-weight: 600;
+	font-size: 15px;
+	font-weight: 700;
 	color: var(--shaparak-navy);
 	cursor: pointer;
 }
@@ -1821,7 +1830,7 @@
 .shaparak-filters__chevron {
 	position: absolute;
 	top: 50%;
-	left: 16px;
+	left: 18px;
 	width: 10px;
 	height: 10px;
 	border-right: 2px solid var(--shaparak-navy);
@@ -1835,14 +1844,15 @@
 	margin: 0;
 	padding: 0;
 	display: grid;
-	gap: 2px;
+	gap: 4px;
 }
 
 .shaparak-check {
 	display: flex;
+	flex-direction: row-reverse; /* box on the left, label on the right (RTL) */
 	align-items: center;
 	gap: 12px;
-	padding: 9px 4px;
+	padding: 11px 2px;
 	cursor: pointer;
 }
 
@@ -1854,9 +1864,9 @@
 }
 
 .shaparak-check__box {
-	width: 26px;
-	height: 26px;
-	border-radius: 8px;
+	width: 28px;
+	height: 28px;
+	border-radius: 9px;
 	border: 2px solid var(--shaparak-line);
 	background: #fff;
 	display: inline-flex;
@@ -1888,9 +1898,16 @@
 }
 
 .shaparak-check__label {
-	font-size: 14.5px;
+	flex: 1;
+	text-align: right;
+	font-size: 15px;
 	font-weight: 600;
 	color: var(--shaparak-ink);
+}
+
+/* cards hidden by the filter panel */
+[data-shaparak-card].is-filtered-out {
+	display: none;
 }
 
 /* ------------------------------------- reports/filters responsive */

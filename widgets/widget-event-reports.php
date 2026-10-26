@@ -97,6 +97,18 @@ class Shaparak_Widget_Event_Reports extends Shaparak_Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'category',
+			array(
+				'label'       => 'دسته‌بندی',
+				'type'        => \Elementor\Controls_Manager::SELECT2,
+				'multiple'    => false,
+				'options'     => self::category_options(),
+				'label_block' => true,
+				'description' => 'خالی = همهٔ دسته‌بندی‌ها',
+			)
+		);
+
 		$this->end_controls_section();
 
 		$this->common_style_controls();
@@ -110,8 +122,9 @@ class Shaparak_Widget_Event_Reports extends Shaparak_Widget_Base {
 
 		$posts = Shaparak_Query::get_events(
 			array(
-				'state'  => 'past',
-				'number' => (int) $s['number'],
+				'state'    => 'past',
+				'number'   => (int) $s['number'],
+				'category' => isset( $s['category'] ) ? (string) $s['category'] : '',
 			)
 		);
 
@@ -176,7 +189,7 @@ class Shaparak_Widget_Event_Reports extends Shaparak_Widget_Base {
 		}
 		$summary = implode( ' · ', $summary_parts );
 		?>
-		<article class="shaparak-repcard">
+		<article class="shaparak-repcard"<?php echo Shaparak_Event_Data::filter_attributes( $id ); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
 			<?php if ( $shots || $more > 0 ) : ?>
 				<div class="shaparak-repcard__gallery">
 					<?php foreach ( $shots as $src ) : ?>

@@ -27,7 +27,7 @@ $link    = Shaparak_Event_Data::text( $id, 'link' );
 $url     = $link ? $link : get_permalink( $id );
 $stats   = Shaparak_Event_Data::stats( $id );
 ?>
-<div class="shaparak-featured">
+<div class="shaparak-featured"<?php echo Shaparak_Event_Data::filter_attributes( $id ); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
 	<div class="shaparak-featured__body">
 		<p class="shaparak-featured__badges">
 			<span class="shaparak-pill shaparak-pill--navy"><?php echo esc_html( $badge['label'] ); ?></span>

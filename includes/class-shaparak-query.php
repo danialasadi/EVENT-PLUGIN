@@ -280,11 +280,11 @@ class Shaparak_Query {
 
 	/**
 	 * Events happening in the current Shamsi week (Saturday → Friday).
-	 *
-	 * @param int $number Limit.
+	 *	 * @param int    $number Limit.
+	 * @param string $category Optional category slug to limit the strip to.
 	 * @return WP_Post[]
 	 */
-	public static function get_week_events( $number = 6 ) {
+	public static function get_week_events( $number = 6, $category = '' ) {
 		$now  = Shaparak_Jalali::parts();
 		$today_start = Shaparak_Jalali::timestamp( $now['jy'], $now['jm'], $now['jd'], 0, 0 );
 		$weekday     = ( (int) gmdate( 'w', $today_start + (int) round( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS ) ) + 1 ) % 7; // 0 = شنبه.
@@ -295,6 +295,7 @@ class Shaparak_Query {
 			array(
 				'state'      => 'any',
 				'number'     => $number,
+				'category'   => $category,
 				'week_start' => $week_start,
 				'week_end'   => $week_end,
 				'order'      => 'ASC',

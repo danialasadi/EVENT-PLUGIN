@@ -2,6 +2,7 @@
  * Shaparak Events — front-end behaviour.
  * - Shamsi countdown ticking (values are rendered server-side in Persian digits)
  * - Toolbar niceties (search clear button, calendar/list toggle state)
+ * - Filter panel: hides/shows the event cards of every widget on the page
  */
 (function () {
 	'use strict';
@@ -64,9 +65,73 @@
 		});
 	}
 
+	/**
+	 * Filter panel: hides/shows every event card on the page (any widget).
+	 */
+	function filters() {
+		var panels = document.querySelectorAll('[data-shaparak-filters]');
+		if (!panels.length) return;
+
+		function panelState(panel) {
+			var select = panel.querySelector('[data-filter-province]');
+			var boxes = panel.querySelectorAll('[data-filter-category]');
+			var checked = [];
+
+			Array.prototype.forEach.call(boxes, function (box) {
+				if (box.checked) checked.push(box.value);
+			});
+
+			return {
+				province: select ? select.value : '',
+				checked: checked,
+				hasCategories: boxes.length > 0
+			};
+		}
+
+		function apply() {
+			var states = [];
+			Array.prototype.forEach.call(panels, function (panel) {
+				states.push(panelState(panel));
+			});
+
+			Array.prototype.forEach.call(document.querySelectorAll('[data-shaparak-card]'), function (card) {
+				var province = card.getAttribute('data-province') || '';
+				var categories = (card.getAttribute('data-categories') || '').split(/\s+/).filter(Boolean);
+				var visible = true;
+
+				states.forEach(function (state) {
+					if (!visible) return;
+
+					if (state.province && province !== state.province) {
+						visible = false;
+						return;
+					}
+
+					if (!state.hasCategories) return;
+
+					// Cards without a category cannot be filtered out.
+					var match = categories.length === 0;
+					categories.forEach(function (slug) {
+						if (state.checked.indexOf(slug) !== -1) match = true;
+					});
+					if (!match) visible = false;
+				});
+
+				card.classList.toggle('is-filtered-out', !visible);
+			});
+		}
+
+		Array.prototype.forEach.call(panels, function (panel) {
+			panel.addEventListener('change', apply);
+		});
+
+		apply();
+	}
+
 	document.addEventListener('DOMContentLoaded', function () {
 		tick();
 		setInterval(tick, 1000);
 		toolbar();
+		filters();
 	});
 })();

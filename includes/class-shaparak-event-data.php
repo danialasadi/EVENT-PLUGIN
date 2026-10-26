@@ -73,6 +73,34 @@ class Shaparak_Event_Data {
 	}
 
 	/**
+	 * Attributes that let the filter panel hide/show this event's card.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return string Raw attribute string (already escaped).
+	 */
+	public static function filter_attributes( $post_id ) {
+		$slugs = array();
+		$terms = get_the_terms( $post_id, Shaparak_Post_Types::CATEGORY );
+		if ( $terms && ! is_wp_error( $terms ) ) {
+			foreach ( $terms as $term ) {
+				$slugs[] = $term->slug;
+			}
+		}
+
+		$province = '';
+		$regions  = get_the_terms( $post_id, Shaparak_Post_Types::PROVINCE );
+		if ( $regions && ! is_wp_error( $regions ) && isset( $regions[0] ) ) {
+			$province = $regions[0]->slug;
+		}
+
+		return sprintf(
+			' data-shaparak-card data-categories="%s" data-province="%s"',
+			esc_attr( implode( ' ', $slugs ) ),
+			esc_attr( $province )
+		);
+	}
+
+	/**
 	 * List meta stored one-per-line (axes, highlights).
 	 *
 	 * @param int    $post_id Post ID.

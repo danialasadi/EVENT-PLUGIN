@@ -16,6 +16,7 @@ class Shaparak_Post_Types {
 
 	const POST_TYPE = 'event';
 	const CATEGORY  = 'event_category';
+	const PROVINCE  = 'event_province';
 	const SUBSCRIBER = 'event_notify';
 
 	/**
@@ -23,6 +24,7 @@ class Shaparak_Post_Types {
 	 */
 	public static function init() {
 		add_action( 'init', array( __CLASS__, 'register' ) );
+		add_action( 'init', array( __CLASS__, 'seed_provinces' ), 20 );
 		add_filter( 'manage_' . self::POST_TYPE . '_posts_columns', array( __CLASS__, 'columns' ) );
 		add_action( 'manage_' . self::POST_TYPE . '_posts_custom_column', array( __CLASS__, 'column_content' ), 10, 2 );
 		add_action( 'admin_notices', array( __CLASS__, 'flush_notice' ) );
@@ -63,7 +65,7 @@ class Shaparak_Post_Types {
 				'menu_icon'          => 'dashicons-calendar-alt',
 				'supports'           => array( 'title', 'editor', 'thumbnail', 'excerpt', 'revisions' ),
 				'show_in_rest'       => true,
-				'taxonomies'         => array( self::CATEGORY ),
+				'taxonomies'         => array( self::CATEGORY, self::PROVINCE ),
 			)
 		);
 
@@ -112,6 +114,124 @@ class Shaparak_Post_Types {
 				),
 			)
 		);
+
+		register_taxonomy(
+			self::PROVINCE,
+			self::POST_TYPE,
+			array(
+				'labels'            => array(
+					'name'          => 'استان‌ها',
+					'singular_name' => 'استان',
+					'menu_name'     => 'استان‌ها',
+					'all_items'     => 'همه استان‌ها',
+					'edit_item'     => 'ویرایش استان',
+					'add_new_item'  => 'افزودن استان',
+					'search_items'  => 'جستجوی استان‌ها',
+					'not_found'     => 'استانی پیدا نشد',
+				),
+				'hierarchical'      => true,
+				'public'            => true,
+				'show_admin_column' => true,
+				'show_in_rest'      => true,
+				'rewrite'           => array(
+					'slug' => 'event-province',
+				),
+			)
+		);
+	}
+
+	/**
+	 * The 31 provinces of Iran: Persian name => stable slug.
+	 *
+	 * @return array<string,string>
+	 */
+	public static function provinces() {
+		return array(
+			'آذربایجان شرقی'      => 'east-azerbaijan',
+			'آذربایجان غربی'      => 'west-azerbaijan',
+			'اردبیل'              => 'ardabil',
+			'اصفهان'              => 'isfahan',
+			'البرز'               => 'alborz',
+			'ایلام'               => 'ilam',
+			'بوشهر'               => 'bushehr',
+			'تهران'               => 'tehran',
+			'چهارمحال و بختیاری'  => 'chaharmahal-bakhtiari',
+			'خراسان جنوبی'        => 'south-khorasan',
+			'خراسان رضوی'         => 'razavi-khorasan',
+			'خراسان شمالی'        => 'north-khorasan',
+			'خوزستان'             => 'khuzestan',
+			'زنجان'               => 'zanjan',
+			'سمنان'               => 'semnan',
+			'سیستان و بلوچستان'   => 'sistan-baluchestan',
+			'فارس'                => 'fars',
+			'قزوین'               => 'qazvin',
+			'قم'                  => 'qom',
+			'کردستان'             => 'kurdistan',
+			'کرمان'               => 'kerman',
+			'کرمانشاه'            => 'kermanshah',
+			'کهگیلویه و بویراحمد' => 'kohgiluyeh-buyer-ahmad',
+			'گلستان'              => 'golestan',
+			'گیلان'               => 'gilan',
+			'لرستان'              => 'lorestan',
+			'مازندران'            => 'mazandaran',
+			'مرکزی'               => 'markazi',
+			'هرمزگان'             => 'hormozegan',
+			'همدان'               => 'hamedan',
+			'یزد'                 => 'yazd',
+		);
+	}
+
+	/**
+	 * Create the province terms once (31 of them, in the canonical order).
+	 */
+	public static function seed_provinces() {
+		if ( ! taxonomy_exists( self::PROVINCE ) || get_option( 'shaparak_events_provinces' ) ) {
+			return;
+		}
+
+		$order = 0;
+		foreach ( self::provinces() as $name => $slug ) {
+			if ( ! term_exists( $slug, self::PROVINCE ) ) {
+				wp_insert_term(
+					$name,
+					self::PROVINCE,
+					array(
+						'slug'       => $slug,
+						'term_group' => $order,
+					)
+				);
+			}
+			$order++;
+		}
+
+		update_option( 'shaparak_events_provinces', 1 );
+	}
+
+	/**
+	 * All province terms in the canonical order.
+	 *
+	 * @return \WP_Term[]
+	 */
+	public static function province_terms() {
+		$terms = get_terms(
+			array(
+				'taxonomy'   => self::PROVINCE,
+				'hide_empty' => false,
+			)
+		);
+		if ( is_wp_error( $terms ) || ! $terms ) {
+			return array();
+		}
+
+		usort(
+			$terms,
+			function ( $a, $b ) {
+				$ga = (int) $a->term_group;
+				$gb = (int) $b->term_group;
+				return $ga === $gb ? strcmp( $a->name, $b->name ) : ( $ga <=> $gb );
+			}
+		);
+		return $terms;
 	}
 
 	/**

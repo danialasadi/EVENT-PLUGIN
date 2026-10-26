@@ -21,7 +21,7 @@ $state = Shaparak_Query::state( $id );
 $link  = Shaparak_Event_Data::text( $id, 'link' );
 $url   = $link ? $link : get_permalink( $id );
 ?>
-<article class="shaparak-compact">
+<article class="shaparak-compact"<?php echo Shaparak_Event_Data::filter_attributes( $id ); // phpcs:ignore WordPress.Security.EscapeOutput ?>>
 	<div class="shaparak-compact__date">
 		<strong><?php echo esc_html( $badge['day'] ); ?></strong>
 		<span><?php echo esc_html( $badge['month'] ); ?></span>

@@ -1,10 +1,11 @@
 <?php
 /**
- * Elementor widget: "فیلترها" — province dropdown + event-type checkboxes.
+ * Elementor widget: "فیلترها" — province dropdown + category checkboxes.
  *
- * A filter panel matching the design: a heading with a funnel icon, a province
- * <select> populated from the events' cities, and a list of event-type toggles
- * rendered as green checkboxes.
+ * The checkbox list is built from the event_category taxonomy and the dropdown
+ * from the event_province taxonomy (31 Iranian provinces), so the panel always
+ * mirrors the admin. Changing it hides/shows the event cards of every widget
+ * on the page (see assets/js/events.js).
  *
  * @package ShaparakEvents
  */
@@ -53,7 +54,7 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 	 * @return array
 	 */
 	public function get_keywords() {
-		return array( 'فیلتر', 'استان', 'نوع', 'دسته‌بندی', 'انتخاب', 'filter' );
+		return array( 'فیلتر', 'استان', 'دسته‌بندی', 'دسته', 'انتخاب', 'filter', 'province' );
 	}
 
 	/**
@@ -96,29 +97,23 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 		);
 
 		$this->add_control(
-			'types',
+			'show_categories',
 			array(
-				'label'       => 'موارد فیلتر (نوع رویداد)',
-				'type'        => \Elementor\Controls_Manager::REPEATER,
-				'title_field' => '{{{ label }}}',
-				'fields'      => array(
-					array(
-						'name'  => 'label',
-						'label' => 'عنوان',
-						'type'  => \Elementor\Controls_Manager::TEXT,
-					),
-					array(
-						'name'  => 'on',
-						'label' => 'پیش‌فرض: انتخاب‌شده',
-						'type'  => \Elementor\Controls_Manager::SWITCHER,
-					),
-				),
-				'default'     => array(
-					array( 'label' => 'رویدادهای ملی', 'on' => 'yes' ),
-					array( 'label' => 'رویدادهای استانی', 'on' => 'yes' ),
-					array( 'label' => 'نشست‌ها', 'on' => 'yes' ),
-					array( 'label' => 'فقط آنلاین', 'on' => '' ),
-				),
+				'label'   => 'نمایش دسته‌بندی‌ها',
+				'type'    => \Elementor\Controls_Manager::SWITCHER,
+				'default' => 'yes',
+			)
+		);
+
+		$this->add_control(
+			'categories',
+			array(
+				'label'       => 'دسته‌بندی‌های نمایش‌داده‌شده',
+				'type'        => \Elementor\Controls_Manager::SELECT2,
+				'multiple'    => true,
+				'label_block' => true,
+				'options'     => self::category_options(),
+				'description' => 'خالی = همهٔ دسته‌بندی‌ها. فهرست از تаксونومی «دسته‌های رویداد» پر می‌شود.',
 			)
 		);
 
@@ -134,26 +129,32 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 		$s = $this->get_settings_for_display();
 
 		$heading = isset( $s['heading'] ) ? trim( (string) $s['heading'] ) : '';
-		$types   = isset( $s['types'] ) && is_array( $s['types'] ) ? $s['types'] : array();
+		$terms   = $this->category_terms( isset( $s['categories'] ) ? (array) $s['categories'] : array() );
+		$provinces = Shaparak_Post_Types::province_terms();
+
+		$show_province = isset( $s['show_province'] ) && 'yes' === $s['show_province'];
+		$show_cats     = isset( $s['show_categories'] ) && 'yes' === $s['show_categories'];
 
 		$this->open_wrapper();
-		echo '<section class="shaparak-comp shaparak-filters">';
+		echo '<section class="shaparak-comp shaparak-filters" data-shaparak-filters>';
 
 		if ( '' !== $heading ) {
 			printf(
-				'<h2 class="shaparak-filters__head"><span class="shaparak-icon shaparak-icon--filter" aria-hidden="true"></span>%s</h2>',
+				'<h2 class="shaparak-filters__head">%s<span class="shaparak-icon shaparak-icon--filter" aria-hidden="true"></span></h2>',
 				esc_html( $heading )
 			);
 		}
 
-		if ( ! empty( $s['show_province'] ) && 'yes' === $s['show_province'] ) {
-			$default_label = isset( $s['province_label'] ) ? (string) $s['province_label'] : 'همه استان‌ها';
+		if ( $show_province && $provinces ) {
+			$default_label = isset( $s['province_label'] ) && '' !== trim( (string) $s['province_label'] )
+				? trim( (string) $s['province_label'] )
+				: 'همه استان‌ها';
 			?>
 			<div class="shaparak-filters__province">
-				<select class="shaparak-filters__select">
+				<select class="shaparak-filters__select" data-filter-province>
 					<option value=""><?php echo esc_html( $default_label ); ?></option>
-					<?php foreach ( self::provinces() as $province ) : ?>
-						<option value="<?php echo esc_attr( $province ); ?>"><?php echo esc_html( $province ); ?></option>
+					<?php foreach ( $provinces as $term ) : ?>
+						<option value="<?php echo esc_attr( $term->slug ); ?>"><?php echo esc_html( $term->name ); ?></option>
 					<?php endforeach; ?>
 				</select>
 				<span class="shaparak-filters__chevron" aria-hidden="true"></span>
@@ -161,20 +162,15 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 			<?php
 		}
 
-		if ( $types ) {
+		if ( $show_cats && $terms ) {
 			echo '<ul class="shaparak-filters__list">';
-			foreach ( $types as $item ) {
-				$label = isset( $item['label'] ) ? trim( (string) $item['label'] ) : '';
-				if ( '' === $label ) {
-					continue;
-				}
-				$on = ! empty( $item['on'] ) && 'yes' === $item['on'];
+			foreach ( $terms as $term ) {
 				?>
 				<li class="shaparak-filters__item">
 					<label class="shaparak-check">
-						<input type="checkbox" <?php checked( $on ); ?>>
+						<input type="checkbox" value="<?php echo esc_attr( $term->slug ); ?>" data-filter-category checked>
 						<span class="shaparak-check__box"><span class="shaparak-icon shaparak-icon--check" aria-hidden="true"></span></span>
-						<span class="shaparak-check__label"><?php echo esc_html( $label ); ?></span>
+						<span class="shaparak-check__label"><?php echo esc_html( $term->name ); ?></span>
 					</label>
 				</li>
 				<?php
@@ -187,24 +183,57 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 	}
 
 	/**
-	 * Distinct event cities, used as the province list.
+	 * Category terms for the checkbox list, optionally limited by the control.
 	 *
-	 * @return string[]
+	 * @param string[] $keep Slugs to keep; empty = all.
+	 * @return \WP_Term[]
 	 */
-	protected static function provinces() {
-		$out = array();
-		$events = Shaparak_Query::get_events(
+	protected function category_terms( $keep ) {
+		$terms = get_terms(
 			array(
-				'state'  => 'any',
-				'number' => 200,
+				'taxonomy'   => Shaparak_Post_Types::CATEGORY,
+				'hide_empty' => false,
+				'orderby'    => 'name',
 			)
 		);
-		foreach ( $events as $event ) {
-			$city = Shaparak_Event_Data::text( $event->ID, 'city' );
-			if ( '' !== $city ) {
-				$out[ $city ] = $city;
+
+		if ( is_wp_error( $terms ) || ! $terms ) {
+			return array();
+		}
+
+		if ( ! $keep ) {
+			return $terms;
+		}
+
+		return array_values(
+			array_filter(
+				$terms,
+				function ( $term ) use ( $keep ) {
+					return in_array( $term->slug, $keep, true );
+				}
+			)
+		);
+	}
+
+	/**
+	 * Category options for the picker.
+	 *
+	 * @return array<string,string>
+	 */
+	protected static function category_options() {
+		$terms = get_terms(
+			array(
+				'taxonomy'   => Shaparak_Post_Types::CATEGORY,
+				'hide_empty' => false,
+			)
+		);
+
+		$out = array();
+		if ( ! is_wp_error( $terms ) ) {
+			foreach ( $terms as $term ) {
+				$out[ $term->slug ] = $term->name;
 			}
 		}
-		return array_values( $out );
+		return $out;
 	}
 }

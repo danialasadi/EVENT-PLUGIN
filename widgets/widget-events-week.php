@@ -84,6 +84,18 @@ class Shaparak_Widget_Events_Week extends Shaparak_Widget_Base {
 			)
 		);
 
+		$this->add_control(
+			'category',
+			array(
+				'label'       => 'دسته‌بندی',
+				'type'        => \Elementor\Controls_Manager::SELECT2,
+				'multiple'    => false,
+				'options'     => self::category_options(),
+				'label_block' => true,
+				'description' => 'خالی = همهٔ دسته‌بندی‌ها',
+			)
+		);
+
 		$this->end_controls_section();
 
 		$this->common_style_controls();
@@ -94,7 +106,10 @@ class Shaparak_Widget_Events_Week extends Shaparak_Widget_Base {
 	 */
 	protected function render() {
 		$s     = $this->get_settings_for_display();
-		$posts = Shaparak_Query::get_week_events( (int) $s['number'] );
+		$posts = Shaparak_Query::get_week_events(
+			(int) $s['number'],
+			isset( $s['category'] ) ? (string) $s['category'] : ''
+		);
 
 		$this->open_wrapper();
 
