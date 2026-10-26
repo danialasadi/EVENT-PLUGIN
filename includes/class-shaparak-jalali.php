@@ -284,7 +284,17 @@ class Shaparak_Jalali {
 	 * @return string
 	 */
 	public static function to_en( $value ) {
-		$value = strtr( (string) $value, array_flip( self::$digits ) );
+		$value = (string) $value;
+		// Persian digits (U+06F0-۰۶F9) -> ASCII.
+		$value = strtr( $value, array_flip( self::$digits ) );
+		// Arabic-Indic digits (U+0660-0669) -> ASCII, which many keyboards produce.
+		$value = strtr(
+			$value,
+			array(
+				'٠' => '0', '١' => '1', '٢' => '2', '٣' => '3', '٤' => '4',
+				'٥' => '5', '٦' => '6', '٧' => '7', '٨' => '8', '٩' => '9',
+			)
+		);
 		return str_replace( array( '٬', '٫', '،' ), array( '', '.', '' ), $value );
 	}
 
