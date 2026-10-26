@@ -148,6 +148,7 @@ class Shaparak_Elementor {
 			'widget-event-gallery.php'     => 'Shaparak_Widget_Event_Gallery',
 			'widget-event-venue.php'       => 'Shaparak_Widget_Event_Venue',
 			'widget-event-report.php'      => 'Shaparak_Widget_Event_Report',
+			'widget-event-pdf.php'         => 'Shaparak_Widget_Event_Pdf',
 			'widget-event-axes.php'        => 'Shaparak_Widget_Event_Axes',
 			'widget-event-about.php'        => 'Shaparak_Widget_Event_About',
 			'widget-event-reports.php'      => 'Shaparak_Widget_Event_Reports',
