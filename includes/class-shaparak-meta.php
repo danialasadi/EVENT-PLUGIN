@@ -605,7 +605,7 @@ class Shaparak_Meta {
 		foreach ( self::$blocks as $key => $field ) {
 			$raw   = isset( $_POST[ $field ] ) ? wp_unslash( $_POST[ $field ] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput
 			$rows  = self::sanitize_block( $key, $raw );
-			update_post_meta( $post_id, $field, wp_json_encode( $rows ) );
+			update_post_meta( $post_id, $field, wp_json_encode( $rows, JSON_UNESCAPED_UNICODE ) );
 		}
 	}
 
