@@ -254,7 +254,10 @@ class Shaparak_Meta {
 						$lines       = array();
 						$lines[]     = $stored_date
 							? $stored_date . ( $stored_time ? ' — ' . $stored_time : '' )
-							: 'تاریخی ذخیره نشده است (سایت از تاریخ انتشار پست استفاده می‌کند)';
+							: 'تاریخی ذخیره نشده است';
+						if ( '' === trim( (string) get_post_meta( $post->ID, self::$fields['start_jalali'], true ) ) ) {
+							$lines[] = 'فیلد «تاریخ شروع (شمسی)» خالی است؛ سایت تاریخ انتشار پست را نشان می‌دهد';
+						}
 						$lines[]     = 'وضعیت: ' . Shaparak_Event_Data::badge( $state )['label'];
 						$lines[]     = 'رویداد شاخص: ' . ( '1' === get_post_meta( $post->ID, self::$fields['featured'], true ) ? 'بله' : 'خیر' );
 						echo esc_html( implode( ' · ', $lines ) );
