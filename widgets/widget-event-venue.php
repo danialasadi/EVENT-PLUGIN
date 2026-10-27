@@ -99,31 +99,18 @@ class Shaparak_Widget_Event_Venue extends Shaparak_Widget_Base {
 		$city   = Shaparak_Event_Data::text( $id, 'city' );
 		$addr   = Shaparak_Event_Data::text( $id, 'address' );
 		$map    = Shaparak_Event_Data::text( $id, 'directions' );
-		$label  = trim( $venue . ( $city ? '، ' . $city : '' ) );
+		$name   = $venue ? $venue : $city;
 
-		if ( ! $label && ! $addr && ! $map ) {
+		if ( ! $name && ! $addr && ! $map ) {
 			return;
 		}
 
 		$this->open_wrapper();
 		echo '<section class="shaparak-comp shaparak-venue">';
-		echo '<div class="shaparak-venue__map">';
-		if ( $map ) {
-			printf(
-				'<iframe src="%s" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="%s"></iframe>',
-				esc_url( $map ),
-				esc_attr( $label )
-			);
-		} elseif ( ! empty( $s['map_placeholder']['url'] ) ) {
-			printf( '<img src="%s" alt="" loading="lazy">', esc_url( $s['map_placeholder']['url'] ) );
-		} else {
-			echo '<span class="shaparak-venue__map-empty" aria-hidden="true"></span>';
-		}
-		echo '<span class="shaparak-venue__pin" aria-hidden="true"></span>';
-		echo '</div>';
 
+		// Text column — on the right in RTL.
 		echo '<div class="shaparak-venue__info">';
-		printf( '<strong class="shaparak-venue__name">%s</strong>', esc_html( $label ? $label : __( 'محل برگزاری', 'shaparak-events' ) ) );
+		printf( '<strong class="shaparak-venue__name">%s</strong>', esc_html( $name ? $name : __( 'محل برگزاری', 'shaparak-events' ) ) );
 		if ( $addr ) {
 			printf( '<span class="shaparak-venue__address">%s</span>', esc_html( $addr ) );
 		}
@@ -135,6 +122,23 @@ class Shaparak_Widget_Event_Venue extends Shaparak_Widget_Base {
 			);
 		}
 		echo '</div>';
+
+		// Map column — on the left in RTL (above the text when stacked on mobile).
+		echo '<div class="shaparak-venue__map">';
+		if ( $map ) {
+			printf(
+				'<iframe src="%s" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="%s"></iframe>',
+				esc_url( $map ),
+				esc_attr( $name )
+			);
+		} elseif ( ! empty( $s['map_placeholder']['url'] ) ) {
+			printf( '<img src="%s" alt="" loading="lazy">', esc_url( $s['map_placeholder']['url'] ) );
+		} else {
+			echo '<span class="shaparak-venue__map-empty" aria-hidden="true"></span>';
+		}
+		echo '<span class="shaparak-venue__pin" aria-hidden="true"></span>';
+		echo '</div>';
+
 		echo '</section>';
 		echo '</div>';
 	}

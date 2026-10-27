@@ -1011,7 +1011,10 @@
 .shaparak-venue__map-empty {
 	position: absolute;
 	inset: 0;
-	background: repeating-linear-gradient(45deg, #eef2f9 0 12px, #e6ebf5 12px 24px);
+	background:
+		repeating-linear-gradient(0deg, transparent 0 46px, #e6ebf5 46px 50px),
+		repeating-linear-gradient(90deg, transparent 0 66px, #e6ebf5 66px 70px),
+		#eef2f9;
 }
 
 .shaparak-venue__pin {
@@ -1575,6 +1578,10 @@
 	.shaparak-featured,
 	.shaparak-venue {
 		grid-template-columns: 1fr;
+	}
+
+	.shaparak-venue__map {
+		order: -1;
 	}
 
 	.shaparak-people__grid {
