@@ -89,7 +89,10 @@ class Shaparak_Widget_Event_Venue extends Shaparak_Widget_Base {
 	 * Render.
 	 */
 	protected function render() {
-		$post   = $this->current_event();
+		$post = $this->current_event();
+		if ( ! $this->state_gate( 'unfinished', $post ) ) {
+			return;
+		}
 		if ( ! $post ) {
 			return;
 		}

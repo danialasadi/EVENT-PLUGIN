@@ -160,6 +160,9 @@ class Shaparak_Widget_Event_Pdf extends Shaparak_Widget_Base {
 	 */
 	protected function render() {
 		$post = $this->current_event();
+		if ( ! $this->state_gate( 'finished', $post ) ) {
+			return;
+		}
 		if ( ! $post ) {
 			return;
 		}

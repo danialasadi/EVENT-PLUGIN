@@ -365,7 +365,7 @@ class Shaparak_Event_Data {
 				'tone'  => 'green',
 			),
 			'past'     => array(
-				'label' => 'برگزار شد',
+				'label' => 'خاتمه یافته',
 				'tone'  => 'navy',
 			),
 		);

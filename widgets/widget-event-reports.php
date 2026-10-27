@@ -3,7 +3,7 @@
  * Elementor widget: held-events "گزارش‌ها و برندگان" slider.
  *
  * A swipeable row of report cards for past events. Each card shows a photo
- * collage, a "برگزار شد" badge with the date, the title, a stats summary and
+ * collage, a "خاتمه یافته" badge with the date, the title, a stats summary and
  * boxes, and a link to the full report. No countdown.
  *
  * @package ShaparakEvents
@@ -205,7 +205,7 @@ class Shaparak_Widget_Event_Reports extends Shaparak_Widget_Base {
 
 			<div class="shaparak-repcard__body">
 				<span class="shaparak-pill shaparak-pill--soft">
-					<?php echo esc_html( 'برگزار شد · ' . $date ); ?>
+					<?php echo esc_html( 'خاتمه یافته · ' . $date ); ?>
 				</span>
 
 				<h3 class="shaparak-repcard__title">

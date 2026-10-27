@@ -153,7 +153,7 @@ class Shaparak_Template {
 		$end   = Shaparak_Query::end_timestamp( $post_id );
 
 		if ( 'past' === $state ) {
-			return '<div class="shaparak-countdown shaparak-countdown--done"><span>' . esc_html__( 'این رویداد برگزار شده است', 'shaparak-events' ) . '</span></div>';
+			return '<div class="shaparak-countdown shaparak-countdown--done"><span>' . esc_html__( 'این رویداد خاتمه یافته است', 'shaparak-events' ) . '</span></div>';
 		}
 
 		$target = ( 'current' === $state ) ? $end : $start;

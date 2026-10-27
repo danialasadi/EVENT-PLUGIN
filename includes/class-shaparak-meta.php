@@ -311,7 +311,7 @@ class Shaparak_Meta {
 				<div class="se-hint">هر محور یک ردیف است و به صورت چیپ نمایش داده می‌شود.</div>
 			</div>
 			<div class="se-field">
-				<label>گزارش رویداد (برای رویدادهای برگزار شده)</label>
+				<label>گزارش رویداد (برای رویدادهای خاتمه یافته)</label>
 				<textarea rows="5" name="<?php echo esc_attr( self::$fields['report'] ); ?>"><?php echo esc_textarea( $get( 'report' ) ); ?></textarea>
 			</div>
 			<div class="se-field">

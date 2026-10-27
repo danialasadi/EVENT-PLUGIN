@@ -81,7 +81,10 @@ class Shaparak_Widget_Event_Winners extends Shaparak_Widget_Base {
 	 * Render.
 	 */
 	protected function render() {
-		$post    = $this->current_event();
+		$post = $this->current_event();
+		if ( ! $this->state_gate( 'finished', $post ) ) {
+			return;
+		}
 		$winners = $post ? Shaparak_Event_Data::winners( $post->ID ) : array();
 		if ( ! $winners ) {
 			return;

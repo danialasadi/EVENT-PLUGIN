@@ -73,11 +73,15 @@ class Shaparak_Widget_Event_Prizes extends Shaparak_Widget_Base {
 	 * Render.
 	 */
 	protected function render() {
-		$post   = $this->current_event();
+		$post = $this->current_event();
+		if ( ! $this->state_gate( 'unfinished', $post ) ) {
+			return;
+		}
+
 		$prizes = $post ? Shaparak_Event_Data::prizes( $post->ID ) : array();
 		if ( ! $prizes ) {
 			// Inside the editor, explain the empty state instead of vanishing.
-			if ( self::is_editing() ) {
+			if ( $this->shaparak_edit_mode() ) {
 				$this->open_wrapper();
 				echo '<p class="shaparak-empty">';
 				if ( $post ) {
@@ -132,17 +136,5 @@ class Shaparak_Widget_Event_Prizes extends Shaparak_Widget_Base {
 			Shaparak_Jalali::to_fa( 'رتبه ۲' ),
 			Shaparak_Jalali::to_fa( 'رتبه ۳' ),
 		);
-	}
-
-	/**
-	 * Are we rendering inside the Elementor editor?
-	 *
-	 * @return bool
-	 */
-	private static function is_editing() {
-		return class_exists( 'Elementor\Plugin' )
-			&& \Elementor\Plugin::$instance
-			&& \Elementor\Plugin::$instance->editor
-			&& \Elementor\Plugin::$instance->editor->is_edit_mode();
 	}
 }

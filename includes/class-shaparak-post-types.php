@@ -296,7 +296,7 @@ class Shaparak_Post_Types {
 			$map   = array(
 				'current' => array( 'در حال برگزاری', '#16a34a' ),
 				'upcoming'=> array( 'پیش رو', '#2563eb' ),
-				'past'    => array( 'گذشته', '#64748b' ),
+				'past'    => array( 'خاتمه یافته', '#64748b' ),
 			);
 			if ( isset( $map[ $state ] ) ) {
 				printf(

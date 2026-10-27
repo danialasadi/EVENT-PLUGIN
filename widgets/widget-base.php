@@ -32,6 +32,53 @@ abstract class Shaparak_Widget_Base extends \Elementor\Widget_Base {
 	}
 
 	/**
+	 * Gate a single-event widget by the event state.
+	 *
+	 * @param string       $show_for finished (past only), unfinished (current or upcoming), any.
+	 * @param WP_Post|null $post     Resolved event.
+	 * @return bool True when rendering may continue.
+	 */
+	protected function state_gate( $show_for, $post ) {
+		if ( 'any' === $show_for || ! $post ) {
+			return true;
+		}
+
+		$finished = 'past' === Shaparak_Query::state( $post->ID );
+		$visible  = 'finished' === $show_for ? $finished : ! $finished;
+		if ( $visible ) {
+			return true;
+		}
+
+		// In the editor, say why this section is hidden for the event.
+		if ( $this->shaparak_edit_mode() ) {
+			$this->open_wrapper();
+			echo '<p class="shaparak-empty">';
+			if ( 'finished' === $show_for ) {
+				echo esc_html__( 'این بخش فقط پس از خاتمه رویداد نمایش داده می‌شود.', 'shaparak-events' );
+			} else {
+				echo esc_html__( 'این بخش فقط تا خاتمه رویداد نمایش داده می‌شود.', 'shaparak-events' );
+			}
+			echo '</p></div>';
+		}
+		return false;
+	}
+
+	/**
+	 * Are we rendering inside the Elementor editor?
+	 *
+	 * Prefixed to avoid clashing with any method Elementor may define.
+	 *
+	 * @return bool
+	 */
+	protected function shaparak_edit_mode() {
+		if ( ! class_exists( '\Elementor\Plugin' ) || ! isset( \Elementor\Plugin::$instance->editor ) ) {
+			return false;
+		}
+		$editor = \Elementor\Plugin::$instance->editor;
+		return is_object( $editor ) ? (bool) $editor->is_edit_mode() : false;
+	}
+
+	/**
 	 * Common content controls: title, state, count, layout.
 	 *
 	 * @param bool $with_layout Include the layout selector.

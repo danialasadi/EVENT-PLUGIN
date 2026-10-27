@@ -93,8 +93,11 @@ class Shaparak_Widget_Event_Gallery extends Shaparak_Widget_Base {
 	 * Render.
 	 */
 	protected function render() {
-		$post   = $this->current_event();
-		$ids    = $post ? Shaparak_Event_Data::gallery( $post->ID ) : array();
+		$post = $this->current_event();
+		if ( ! $this->state_gate( 'finished', $post ) ) {
+			return;
+		}
+		$ids = $post ? Shaparak_Event_Data::gallery( $post->ID ) : array();
 		if ( ! $ids ) {
 			return;
 		}

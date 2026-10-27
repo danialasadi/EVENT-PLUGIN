@@ -74,6 +74,9 @@ class Shaparak_Widget_Event_Timeline extends Shaparak_Widget_Base {
 	 */
 	protected function render() {
 		$post = $this->current_event();
+		if ( ! $this->state_gate( 'unfinished', $post ) ) {
+			return;
+		}
 		if ( ! $post ) {
 			return;
 		}
