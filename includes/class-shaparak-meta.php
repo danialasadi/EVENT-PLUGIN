@@ -54,6 +54,7 @@ class Shaparak_Meta {
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_box' ) );
 		add_action( 'save_post_' . Shaparak_Post_Types::POST_TYPE, array( __CLASS__, 'save' ), 10, 2 );
 		add_action( 'admin_notices', array( __CLASS__, 'date_notice' ) );
+		add_action( 'init', array( __CLASS__, 'repair_timestamps' ), 30 );
 		add_action( 'admin_footer-post.php', array( __CLASS__, 'admin_script' ) );
 		add_action( 'admin_footer-post-new.php', array( __CLASS__, 'admin_script' ) );
 	}
@@ -693,6 +694,53 @@ class Shaparak_Meta {
 			}
 		}
 		return $rows;
+	}
+
+	/**
+	 * One-time rebuild of the derived timestamps after the date-conversion fix.
+	 *
+	 * _event_start/_event_end are pure derivatives of the Shamsi text fields,
+	 * so recomputing them is safe and idempotent; without it every existing
+	 * event would keep the old +2 day / +offset value until re-saved.
+	 */
+	public static function repair_timestamps() {
+		if ( get_option( 'shaparak_events_ts_repair' ) ) {
+			return;
+		}
+
+		$ids = get_posts(
+			array(
+				'post_type'      => Shaparak_Post_Types::POST_TYPE,
+				'post_status'    => 'any',
+				'posts_per_page' => -1,
+				'fields'         => 'ids',
+			)
+		);
+
+		foreach ( $ids as $id ) {
+			foreach ( array( 'start', 'end' ) as $which ) {
+				$raw  = trim( (string) get_post_meta( $id, self::$fields[ $which . '_jalali' ], true ) );
+				$date = self::normalize_date( $raw );
+				if ( '' === $raw || '' === $date ) {
+					continue;
+				}
+
+				$time = self::normalize_time( get_post_meta( $id, self::$fields[ $which . '_time' ], true ) );
+				if ( '' === $time ) {
+					$time = 'start' === $which ? '00:00' : '23:59';
+				}
+
+				list( $y, $m, $d ) = explode( '/', $date );
+				list( $hh, $mm )   = explode( ':', $time );
+				update_post_meta(
+					$id,
+					self::$fields[ $which ],
+					Shaparak_Jalali::timestamp( (int) $y, (int) $m, (int) $d, (int) $hh, (int) $mm )
+				);
+			}
+		}
+
+		update_option( 'shaparak_events_ts_repair', 1 );
 	}
 
 	/**

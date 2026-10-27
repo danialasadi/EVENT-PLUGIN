@@ -41,7 +41,12 @@ class Shaparak_Query {
 			return Shaparak_Jalali::timestamp( $y, $m, $d, $hh, $mm );
 		}
 		$post = get_post( $post_id );
-		return $post ? (int) strtotime( $post->post_date ) : 0;
+		if ( ! $post ) {
+			return 0;
+		}
+		// post_date is site-local wall-clock time; strtotime() reads it as UTC.
+		$offset = (int) round( (float) get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
+		return (int) strtotime( $post->post_date ) - $offset;
 	}
 
 	/**

@@ -107,7 +107,10 @@ class Shaparak_Jalali {
 			$gy = 621;
 		}
 
-		$days = ( 365 * $jy ) + (int) ( ( $jy + 3 ) / 4 ) - (int) ( ( $jy + 99 ) / 100 ) + (int) ( ( $jy + 399 ) / 400 ) + 80 + $jd + ( ( $jm < 7 ) ? ( ( $jm - 1 ) * 31 ) : ( ( ( $jm - 7 ) * 30 ) + 186 ) );
+		// 8 leap days per 33-year cycle + the cycle's 4th-year leap, from the
+		// epoch used above. The previous expression was two days too large,
+		// which shifted every stored event date by +2 days.
+		$days = ( 365 * $jy ) + ( (int) ( $jy / 33 ) ) * 8 + (int) ( ( ( $jy % 33 ) + 3 ) / 4 ) + 78 + $jd + ( ( $jm < 7 ) ? ( ( $jm - 1 ) * 31 ) : ( ( ( $jm - 7 ) * 30 ) + 186 ) );
 		$gy  += 400 * (int) ( $days / 146097 );
 		$days %= 146097;
 
@@ -156,7 +159,10 @@ class Shaparak_Jalali {
 	 */
 	public static function timestamp( $jy, $jm, $jd, $h = 0, $i = 0 ) {
 		list( $gy, $gm, $gd ) = self::jalali_to_gregorian( (int) $jy, (int) $jm, (int) $jd );
-		return (int) mktime( (int) $h, (int) $i, 0, (int) $gm, (int) $gd, (int) $gy );
+		// mktime() runs in WordPress' UTC timezone, while parts() re-adds
+		// gmt_offset: store the real epoch of that local wall-clock moment so
+		// printing it back (and comparing it with time()) is exact.
+		return (int) mktime( (int) $h, (int) $i, 0, (int) $gm, (int) $gd, (int) $gy ) - self::offset();
 	}
 
 	/**
@@ -315,7 +321,8 @@ class Shaparak_Jalali {
 		}
 		list( $gy, $gm, $gd ) = self::jalali_to_gregorian( (int) $jy + 1, 1, 1 );
 		list( , , $last )     = self::gregorian_to_jalali( $gy, $gm, $gd - 1 );
-		return ( 29 === $last ) ? 30 : 29;
+		$last                 = (int) $last;
+		return in_array( $last, array( 29, 30 ), true ) ? $last : 29;
 	}
 
 	/**
