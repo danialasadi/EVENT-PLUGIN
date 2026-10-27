@@ -1,6 +1,6 @@
 <?php
 /**
- * Elementor widget: event report (text + achievements + stats + PDF).
+ * Elementor widget: event report (text + achievements).
  *
  * @package ShaparakEvents
  */
@@ -49,7 +49,7 @@ class Shaparak_Widget_Event_Report extends Shaparak_Widget_Base {
 	 * @return array
 	 */
 	public function get_keywords() {
-		return array( 'گزارش', 'دستاورد', 'آمار', 'خلاصه', 'PDF' );
+		return array( 'گزارش', 'دستاورد', 'خلاصه' );
 	}
 
 	/**
@@ -64,22 +64,6 @@ class Shaparak_Widget_Event_Report extends Shaparak_Widget_Base {
 			)
 		);
 		$this->source_controls();
-		$this->add_control(
-			'show_stats',
-			array(
-				'label'   => 'نمایش آمار',
-				'type'    => \Elementor\Controls_Manager::SWITCHER,
-				'default' => 'yes',
-			)
-		);
-		$this->add_control(
-			'show_pdf',
-			array(
-				'label'   => 'دکمه دانلود گزارش کامل',
-				'type'    => \Elementor\Controls_Manager::SWITCHER,
-				'default' => 'yes',
-			)
-		);
 		$this->end_controls_section();
 
 		$this->common_style_controls();
@@ -94,14 +78,11 @@ class Shaparak_Widget_Event_Report extends Shaparak_Widget_Base {
 			return;
 		}
 
-		$s         = $this->get_settings_for_display();
 		$id        = $post->ID;
 		$text      = Shaparak_Event_Data::text( $id, 'report' );
 		$highlights = Shaparak_Event_Data::lines( $id, 'highlights' );
-		$stats     = ( 'yes' === $s['show_stats'] ) ? Shaparak_Event_Data::stats( $id ) : array();
-		$pdf       = ( 'yes' === $s['show_pdf'] ) ? Shaparak_Event_Data::text( $id, 'report_pdf' ) : '';
 
-		if ( ! $text && ! $highlights && ! $stats ) {
+		if ( ! $text && ! $highlights ) {
 			return;
 		}
 
@@ -119,26 +100,6 @@ class Shaparak_Widget_Event_Report extends Shaparak_Widget_Base {
 				printf( '<li><span class="shaparak-icon shaparak-icon--check" aria-hidden="true"></span>%s</li>', esc_html( $line ) );
 			}
 			echo '</ul>';
-		}
-
-		if ( $stats ) {
-			echo '<div class="shaparak-stats">';
-			foreach ( $stats as $stat ) {
-				printf(
-					'<div class="shaparak-stats__item"><strong>%s</strong><span>%s</span></div>',
-					esc_html( Shaparak_Jalali::to_fa( $stat['value'] ) ),
-					esc_html( $stat['label'] )
-				);
-			}
-			echo '</div>';
-		}
-
-		if ( $pdf ) {
-			printf(
-				'<a class="shaparak-btn shaparak-btn--navy" href="%s" target="_blank" rel="noopener"><span class="shaparak-icon shaparak-icon--download" aria-hidden="true"></span>%s</a>',
-				esc_url( $pdf ),
-				esc_html__( 'دانلود گزارش کامل (PDF)', 'shaparak-events' )
-			);
 		}
 
 		echo '</section>';
