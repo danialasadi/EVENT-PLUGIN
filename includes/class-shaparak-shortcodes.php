@@ -194,7 +194,7 @@ class Shaparak_Shortcodes {
 	 * [shaparak_component name="hero|featured|card|compact" id="123"]
 	 *
 	 * Renders one of the shared templates outside Elementor. The remaining
-	 * components (timeline, prizes, people, winners, FAQ, gallery, venue, report,
+	 * components (timeline, prizes, people, winners, gallery, venue, report,
 	 * axes) ship as Elementor widgets in the "شاپرک · رویدادها" panel.
 	 *
 	 * @param array $atts Attributes.

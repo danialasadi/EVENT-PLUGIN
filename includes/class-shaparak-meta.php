@@ -42,7 +42,6 @@ class Shaparak_Meta {
 		'agenda'  => '_event_agenda',
 		'prizes'  => '_event_prizes',
 		'people'  => '_event_people',
-		'faq'     => '_event_faq',
 		'winners' => '_event_winners',
 		'axes'    => '_event_axes',
 	);
@@ -132,18 +131,6 @@ class Shaparak_Meta {
 					'type'  => 'media',
 				),
 			),
-			'faq'     => array(
-				array(
-					'name'  => 'q',
-					'label' => 'پرسش',
-					'type'  => 'text',
-				),
-				array(
-					'name'  => 'a',
-					'label' => 'پاسخ',
-					'type'  => 'textarea',
-				),
-			),
 			'winners' => array(
 				array(
 					'name'  => 'title',
@@ -219,7 +206,6 @@ class Shaparak_Meta {
 			<button type="button" data-se-tab="prizes">جوایز</button>
 			<button type="button" data-se-tab="people">داوران و منتورها</button>
 			<button type="button" data-se-tab="winners">برندگان</button>
-			<button type="button" data-se-tab="faq">پرسش‌های پرتکرار</button>
 			<button type="button" data-se-tab="content">متن و محورها</button>
 			<button type="button" data-se-tab="media">گزارش و گالری</button>
 		</div>
@@ -315,11 +301,6 @@ class Shaparak_Meta {
 		<!-- برندگان -->
 		<div class="se-pane" data-se-pane="winners">
 			<?php self::repeater( 'winners', $post->ID ); ?>
-		</div>
-
-		<!-- سوالات -->
-		<div class="se-pane" data-se-pane="faq">
-			<?php self::repeater( 'faq', $post->ID ); ?>
 		</div>
 
 		<!-- متن -->

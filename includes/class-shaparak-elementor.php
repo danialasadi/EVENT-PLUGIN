@@ -144,7 +144,6 @@ class Shaparak_Elementor {
 			'widget-event-prizes.php'      => 'Shaparak_Widget_Event_Prizes',
 			'widget-event-people.php'      => 'Shaparak_Widget_Event_People',
 			'widget-event-winners.php'     => 'Shaparak_Widget_Event_Winners',
-			'widget-event-faq.php'         => 'Shaparak_Widget_Event_Faq',
 			'widget-event-gallery.php'     => 'Shaparak_Widget_Event_Gallery',
 			'widget-event-venue.php'       => 'Shaparak_Widget_Event_Venue',
 			'widget-event-report.php'      => 'Shaparak_Widget_Event_Report',

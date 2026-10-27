@@ -35,7 +35,6 @@ class Shaparak_Event_Data {
 			'agenda'     => '_event_agenda',
 			'prizes'     => '_event_prizes',
 			'people'     => '_event_people',
-			'faq'        => '_event_faq',
 			'winners'    => '_event_winners',
 			'report'     => '_event_report',
 			'highlights' => '_event_highlights',
@@ -252,23 +251,6 @@ class Shaparak_Event_Data {
 				'name'   => isset( $row['name'] ) ? (string) $row['name'] : '',
 				'role'   => isset( $row['role'] ) ? (string) $row['role'] : '',
 				'avatar' => isset( $row['avatar'] ) ? (int) $row['avatar'] : 0,
-			);
-		}
-		return $out;
-	}
-
-	/**
-	 * FAQ.
-	 *
-	 * @param int $post_id Post ID.
-	 * @return array<int,array{q:string,a:string}>
-	 */
-	public static function faq( $post_id ) {
-		$out = array();
-		foreach ( self::rows( $post_id, 'faq' ) as $row ) {
-			$out[] = array(
-				'q' => isset( $row['q'] ) ? (string) $row['q'] : '',
-				'a' => isset( $row['a'] ) ? (string) $row['a'] : '',
 			);
 		}
 		return $out;

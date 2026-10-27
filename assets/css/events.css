@@ -899,63 +899,6 @@
 	color: var(--shaparak-muted);
 }
 
-/* --------------------------------------------------------------- faq */
-
-.shaparak-faq__item {
-	background: var(--shaparak-page);
-	border: 1px solid var(--shaparak-line);
-	border-radius: var(--shaparak-radius-sm);
-	padding: 0 16px;
-	margin-bottom: 10px;
-	overflow: hidden;
-}
-
-.shaparak-faq__item.is-open {
-	background: #f7fee7;
-	border-color: #dbf3c4;
-}
-
-.shaparak-faq__q {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 12px;
-	padding: 14px 0;
-	font-weight: 700;
-	font-size: 14.5px;
-	color: var(--shaparak-navy);
-	cursor: pointer;
-	list-style: none;
-}
-
-.shaparak-faq__q::-webkit-details-marker {
-	display: none;
-}
-
-.shaparak-faq__chevron {
-	width: 10px;
-	height: 10px;
-	border-inline-start: 2px solid var(--shaparak-muted);
-	border-bottom: 2px solid var(--shaparak-muted);
-	transform: rotate(-135deg);
-	transition: transform 0.2s ease;
-	flex: none;
-}
-
-.shaparak-faq__item[open] .shaparak-faq__chevron {
-	transform: rotate(45deg);
-}
-
-.shaparak-faq__a {
-	padding: 0 0 16px;
-	color: var(--shaparak-muted);
-	font-size: 13.5px;
-}
-
-.shaparak-faq__a p {
-	margin: 0 0 8px;
-}
-
 /* ----------------------------------------------------------- gallery */
 
 .shaparak-gallery__grid {
