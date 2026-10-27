@@ -53,6 +53,7 @@ class Shaparak_Meta {
 	public static function init() {
 		add_action( 'add_meta_boxes', array( __CLASS__, 'add_box' ) );
 		add_action( 'save_post_' . Shaparak_Post_Types::POST_TYPE, array( __CLASS__, 'save' ), 10, 2 );
+		add_action( 'admin_notices', array( __CLASS__, 'date_notice' ) );
 		add_action( 'admin_footer-post.php', array( __CLASS__, 'admin_script' ) );
 		add_action( 'admin_footer-post-new.php', array( __CLASS__, 'admin_script' ) );
 	}
@@ -241,6 +242,24 @@ class Shaparak_Meta {
 						<input type="text" name="<?php echo esc_attr( self::$fields['end_time'] ); ?>" value="<?php echo esc_attr( $get( 'end_time' ) ); ?>" placeholder="21:00" maxlength="5" style="max-width:90px" inputmode="numeric">
 					</div>
 					<div class="se-hint">برای رویداد یک‌روزه خالی بگذارید</div>
+				</div>
+
+				<div class="se-field" style="grid-column:1/-1">
+					<label>تاریخ ذخیره‌شده (همان چیزی که سایت نشان می‌دهد)</label>
+					<div class="se-hint" style="margin-top:2px">
+						<?php
+						$stored_date = Shaparak_Query::date_label( $post->ID );
+						$stored_time = Shaparak_Query::time_label( $post->ID );
+						$state       = Shaparak_Query::state( $post->ID );
+						$lines       = array();
+						$lines[]     = $stored_date
+							? $stored_date . ( $stored_time ? ' — ' . $stored_time : '' )
+							: 'تاریخی ذخیره نشده است (سایت از تاریخ انتشار پست استفاده می‌کند)';
+						$lines[]     = 'وضعیت: ' . Shaparak_Event_Data::badge( $state )['label'];
+						$lines[]     = 'رویداد شاخص: ' . ( '1' === get_post_meta( $post->ID, self::$fields['featured'], true ) ? 'بله' : 'خیر' );
+						echo esc_html( implode( ' · ', $lines ) );
+						?>
+					</div>
 				</div>
 
 				<div class="se-field">
@@ -536,30 +555,57 @@ class Shaparak_Meta {
 		};
 
 		// --- dates ------------------------------------------------------
-		$start_date = self::normalize_date( $get( self::$fields['start_jalali'] ) );
+		$start_raw  = trim( (string) $get( self::$fields['start_jalali'] ) );
+		$start_date = self::normalize_date( $start_raw );
 		$start_time = self::normalize_time( $get( self::$fields['start_time'] ) );
-		update_post_meta( $post_id, self::$fields['start_jalali'], $start_date );
-		update_post_meta( $post_id, self::$fields['start_time'], $start_time );
+		$bad_dates  = array();
 
-		if ( $start_date ) {
-			list( $y, $m, $d ) = explode( '/', $start_date );
-			list( $hh, $mm )   = explode( ':', $start_time ? $start_time : '00:00' );
-			update_post_meta( $post_id, self::$fields['start'], Shaparak_Jalali::timestamp( $y, $m, $d, $hh, $mm ) );
+		if ( '' !== $start_raw && '' === $start_date ) {
+			// Keep the stored value: dropping it would silently send the site
+			// back to the post's publish date ("the update had no effect").
+			$bad_dates[] = 'تاریخ شروع';
 		} else {
-			delete_post_meta( $post_id, self::$fields['start'] );
+			update_post_meta( $post_id, self::$fields['start_jalali'], $start_date );
+			update_post_meta( $post_id, self::$fields['start_time'], $start_time );
+
+			if ( $start_date ) {
+				list( $y, $m, $d ) = explode( '/', $start_date );
+				list( $hh, $mm )   = explode( ':', $start_time ? $start_time : '00:00' );
+				update_post_meta( $post_id, self::$fields['start'], Shaparak_Jalali::timestamp( $y, $m, $d, $hh, $mm ) );
+			} else {
+				delete_post_meta( $post_id, self::$fields['start'] );
+			}
 		}
 
-		$end_date = self::normalize_date( $get( self::$fields['end_jalali'] ) );
+		$end_raw  = trim( (string) $get( self::$fields['end_jalali'] ) );
+		$end_date = self::normalize_date( $end_raw );
 		$end_time = self::normalize_time( $get( self::$fields['end_time'] ) );
-		update_post_meta( $post_id, self::$fields['end_jalali'], $end_date );
-		update_post_meta( $post_id, self::$fields['end_time'], $end_time );
 
-		if ( $end_date ) {
-			list( $y, $m, $d ) = explode( '/', $end_date );
-			list( $hh, $mm )   = explode( ':', $end_time ? $end_time : '23:59' );
-			update_post_meta( $post_id, self::$fields['end'], Shaparak_Jalali::timestamp( $y, $m, $d, $hh, $mm ) );
+		if ( '' !== $end_raw && '' === $end_date ) {
+			$bad_dates[] = 'تاریخ پایان';
 		} else {
-			delete_post_meta( $post_id, self::$fields['end'] );
+			update_post_meta( $post_id, self::$fields['end_jalali'], $end_date );
+			update_post_meta( $post_id, self::$fields['end_time'], $end_time );
+
+			if ( $end_date ) {
+				list( $y, $m, $d ) = explode( '/', $end_date );
+				list( $hh, $mm )   = explode( ':', $end_time ? $end_time : '23:59' );
+				update_post_meta( $post_id, self::$fields['end'], Shaparak_Jalali::timestamp( $y, $m, $d, $hh, $mm ) );
+			} else {
+				delete_post_meta( $post_id, self::$fields['end'] );
+			}
+		}
+
+		if ( $bad_dates ) {
+			set_transient(
+				'shaparak_event_bad_date',
+				sprintf(
+					/* translators: %s: field name. */
+					__( '%s قابل پردازش نیست (مثال درست: 1404/08/05) و مقدار قبلی حفظ شد.', 'shaparak-events' ),
+					implode( ' و ', $bad_dates )
+				),
+				60
+			);
 		}
 
 		// --- simple fields ----------------------------------------------
@@ -572,7 +618,27 @@ class Shaparak_Meta {
 		update_post_meta( $post_id, self::$fields['map'], sanitize_text_field( $get( self::$fields['map'] ) ) );
 		update_post_meta( $post_id, self::$fields['report'], wp_kses_post( $get( self::$fields['report'] ) ) );
 		update_post_meta( $post_id, self::$fields['highlights'], wp_kses_post( $get( self::$fields['highlights'] ) ) );
-		update_post_meta( $post_id, self::$fields['featured'], isset( $_POST[ self::$fields['featured'] ] ) ? '1' : '' );
+		$is_featured = isset( $_POST[ self::$fields['featured'] ] ); // phpcs:ignore WordPress.Security.NonceVerification.Missing
+		update_post_meta( $post_id, self::$fields['featured'], $is_featured ? '1' : '' );
+
+		// Only one event may sit in the top card: unchecking the others here is
+		// what makes the checkbox visibly take effect.
+		if ( $is_featured ) {
+			$others = get_posts(
+				array(
+					'post_type'      => Shaparak_Post_Types::POST_TYPE,
+					'post_status'    => 'any',
+					'posts_per_page' => -1,
+					'fields'         => 'ids',
+					'meta_key'       => self::$fields['featured'], // phpcs:ignore WordPress.DB.SlowDBQuery
+					'meta_value'     => '1',
+					'post__not_in'   => array( $post_id ),
+				)
+			);
+			foreach ( $others as $other_id ) {
+				delete_post_meta( $other_id, self::$fields['featured'] );
+			}
+		}
 
 		$gallery = sanitize_text_field( $get( self::$fields['gallery'] ) );
 		update_post_meta(
@@ -624,6 +690,27 @@ class Shaparak_Meta {
 			}
 		}
 		return $rows;
+	}
+
+	/**
+	 * Show why a submitted date was rejected (set by save()).
+	 */
+	public static function date_notice() {
+		$message = get_transient( 'shaparak_event_bad_date' );
+		if ( ! $message ) {
+			return;
+		}
+
+		$screen = get_current_screen();
+		if ( ! $screen || Shaparak_Post_Types::POST_TYPE !== $screen->post_type ) {
+			return;
+		}
+		delete_transient( 'shaparak_event_bad_date' );
+
+		printf(
+			'<div class="notice notice-error is-dismissible"><p>%s</p></div>',
+			esc_html( $message )
+		);
 	}
 
 	/**
