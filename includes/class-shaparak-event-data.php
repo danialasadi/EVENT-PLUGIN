@@ -302,7 +302,7 @@ class Shaparak_Event_Data {
 	}
 
 	/**
-	 * Resolve the event for a widget: current post, explicit ID, or the featured one.
+	 * Resolve the event for a widget: explicit ID → current post → featured → newest.
 	 *
 	 * @param int $explicit Optional post ID.
 	 * @return WP_Post|null
@@ -313,14 +313,28 @@ class Shaparak_Event_Data {
 			if ( $post && Shaparak_Post_Types::POST_TYPE === $post->post_type ) {
 				return $post;
 			}
-			return null;
+			// Stale selection (event trashed or deleted): fall through to the page context.
 		}
 
 		$current = get_post( get_the_ID() );
 		if ( $current && Shaparak_Post_Types::POST_TYPE === $current->post_type ) {
 			return $current;
 		}
-		return Shaparak_Query::get_featured_event();
+
+		$featured = Shaparak_Query::get_featured_event();
+		if ( $featured ) {
+			return $featured;
+		}
+
+		// Last resort: the newest published event, so widgets are never empty.
+		$latest = Shaparak_Query::get_events(
+			array(
+				'state'   => 'any',
+				'number'  => 1,
+				'orderby' => 'date',
+			)
+		);
+		return $latest ? $latest[0] : null;
 	}
 
 	/**

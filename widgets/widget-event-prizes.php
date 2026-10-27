@@ -76,11 +76,21 @@ class Shaparak_Widget_Event_Prizes extends Shaparak_Widget_Base {
 		$post   = $this->current_event();
 		$prizes = $post ? Shaparak_Event_Data::prizes( $post->ID ) : array();
 		if ( ! $prizes ) {
-			return;
-		}
-
-		// Hidden once the event is over.
-		if ( 'past' === Shaparak_Query::state( $post->ID ) ) {
+			// Inside the editor, explain the empty state instead of vanishing.
+			if ( self::is_editing() ) {
+				$this->open_wrapper();
+				echo '<p class="shaparak-empty">';
+				if ( $post ) {
+					printf(
+						/* translators: %s: event title. */
+						esc_html__( 'برای رویداد «%s» جایزه‌ای ثبت نشده است. از تب «جوایز» در جزئیات رویداد ردیف اضافه کنید.', 'shaparak-events' ),
+						esc_html( get_the_title( $post ) )
+					);
+				} else {
+					echo esc_html__( 'رویدادی پیدا نشد — رویداد را در تنظیمات ویجت انتخاب کنید یا یک رویداد شاخص داشته باشید.', 'shaparak-events' );
+				}
+				echo '</p></div>';
+			}
 			return;
 		}
 
@@ -122,5 +132,17 @@ class Shaparak_Widget_Event_Prizes extends Shaparak_Widget_Base {
 			Shaparak_Jalali::to_fa( 'رتبه ۲' ),
 			Shaparak_Jalali::to_fa( 'رتبه ۳' ),
 		);
+	}
+
+	/**
+	 * Are we rendering inside the Elementor editor?
+	 *
+	 * @return bool
+	 */
+	private static function is_editing() {
+		return class_exists( 'Elementor\Plugin' )
+			&& \Elementor\Plugin::$instance
+			&& \Elementor\Plugin::$instance->editor
+			&& \Elementor\Plugin::$instance->editor->is_edit_mode();
 	}
 }
