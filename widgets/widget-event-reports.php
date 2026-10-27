@@ -4,7 +4,8 @@
  *
  * A swipeable row of report cards for past events. Each card shows a photo
  * collage, a "خاتمه یافته" badge with the date, the title, a stats summary and
- * boxes, and a link to the full report. No countdown.
+ * boxes, and a link to the full report. No countdown. The row loops
+ * endlessly (cloned edge cards) and auto-advances every N seconds (0 = off).
  *
  * @package ShaparakEvents
  */
@@ -98,6 +99,18 @@ class Shaparak_Widget_Event_Reports extends Shaparak_Widget_Base {
 		);
 
 		$this->add_control(
+			'autoplay',
+			array(
+				'label'       => 'تایم تعویض خودکار (ثانیه)',
+				'type'        => \Elementor\Controls_Manager::NUMBER,
+				'min'         => 0,
+				'max'         => 60,
+				'default'     => 5,
+				'description' => '۰ = غیرفعال؛ چرخش خودکار با این فاصله انجام می‌شود و اسلایدر همیشه بی‌نهایت است.',
+			)
+		);
+
+		$this->add_control(
 			'category',
 			array(
 				'label'       => 'دسته‌بندی',
@@ -142,8 +155,9 @@ class Shaparak_Widget_Event_Reports extends Shaparak_Widget_Base {
 		}
 
 		$show_stats = ! empty( $s['show_stats'] ) && 'yes' === $s['show_stats'];
+		$autoplay   = isset( $s['autoplay'] ) ? max( 0, (int) $s['autoplay'] ) : 5;
 
-		echo '<div class="shaparak-reports__track">';
+		printf( '<div class="shaparak-reports__track" data-shaparak-autoplay="%d">', (int) $autoplay );
 		foreach ( $posts as $post ) {
 			$this->render_card( $post, $show_stats );
 		}
