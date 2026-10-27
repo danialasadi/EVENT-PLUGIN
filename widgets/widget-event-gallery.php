@@ -63,6 +63,15 @@ class Shaparak_Widget_Event_Gallery extends Shaparak_Widget_Base {
 				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
 			)
 		);
+		$this->add_control(
+			'title',
+			array(
+				'label'   => 'عنوان بخش',
+				'type'    => \Elementor\Controls_Manager::TEXT,
+				'default' => 'گالری تصاویر',
+			)
+		);
+
 		$this->source_controls();
 		$this->add_control(
 			'columns',
@@ -106,6 +115,8 @@ class Shaparak_Widget_Event_Gallery extends Shaparak_Widget_Base {
 		$lightbox = 'yes' === $s['lightbox'];
 
 		$this->open_wrapper();
+		$s = $this->get_settings_for_display();
+		$this->section_title( $s['title'] );
 		echo '<section class="shaparak-comp shaparak-gallery" style="--shaparak-cols:' . esc_attr( (int) $s['columns'] ) . '">';
 		echo '<div class="shaparak-gallery__grid">';
 		foreach ( $ids as $att_id ) {

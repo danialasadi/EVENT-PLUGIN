@@ -63,6 +63,15 @@ class Shaparak_Widget_Event_Winners extends Shaparak_Widget_Base {
 				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
 			)
 		);
+		$this->add_control(
+			'title',
+			array(
+				'label'   => 'عنوان بخش',
+				'type'    => \Elementor\Controls_Manager::TEXT,
+				'default' => 'برندگان',
+			)
+		);
+
 		$this->source_controls();
 		$this->add_control(
 			'podium',
@@ -87,6 +96,23 @@ class Shaparak_Widget_Event_Winners extends Shaparak_Widget_Base {
 		}
 		$winners = $post ? Shaparak_Event_Data::winners( $post->ID ) : array();
 		if ( ! $winners ) {
+			// Inside the editor, explain the empty state instead of vanishing.
+			if ( $this->shaparak_edit_mode() ) {
+				$this->open_wrapper();
+				$s = $this->get_settings_for_display();
+				$this->section_title( $s['title'] );
+				echo '<p class="shaparak-empty">';
+				if ( $post ) {
+					printf(
+						/* translators: %s: event title. */
+						esc_html__( 'برای رویداد «%s» برندگانی ثبت نشده است. از تب «برندگان» در جزئیات رویداد ردیف اضافه کنید.', 'shaparak-events' ),
+						esc_html( get_the_title( $post ) )
+					);
+				} else {
+					echo esc_html__( 'رویدادی پیدا نشد — رویداد را در تنظیمات ویجت انتخاب کنید یا یک رویداد شاخص داشته باشید.', 'shaparak-events' );
+				}
+				echo '</p></div>';
+			}
 			return;
 		}
 
@@ -103,6 +129,8 @@ class Shaparak_Widget_Event_Winners extends Shaparak_Widget_Base {
 		}
 
 		$this->open_wrapper();
+		$s = $this->get_settings_for_display();
+		$this->section_title( $s['title'] );
 		echo '<section class="shaparak-comp shaparak-winners"><div class="shaparak-winners__grid">';
 		foreach ( $order as $i => $winner ) {
 			$rank  = isset( $ranks[ $i ] ) ? $ranks[ $i ] : ( $i + 1 );

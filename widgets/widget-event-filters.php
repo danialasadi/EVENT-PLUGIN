@@ -70,6 +70,15 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 		);
 
 		$this->add_control(
+			'title',
+			array(
+				'label'   => 'عنوان بخش',
+				'type'    => \Elementor\Controls_Manager::TEXT,
+				'default' => 'فیلترها',
+			)
+		);
+
+		$this->add_control(
 			'show_province',
 			array(
 				'label'   => 'نمایش انتخاب استان',
@@ -114,6 +123,8 @@ class Shaparak_Widget_Event_Filters extends Shaparak_Widget_Base {
 		$show_cats     = isset( $s['show_categories'] ) && 'yes' === $s['show_categories'];
 
 		$this->open_wrapper();
+		$s = $this->get_settings_for_display();
+		$this->section_title( $s['title'] );
 		echo '<section class="shaparak-comp shaparak-filters" data-shaparak-filters>';
 
 		if ( $show_province && $provinces ) {

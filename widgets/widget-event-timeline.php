@@ -63,6 +63,15 @@ class Shaparak_Widget_Event_Timeline extends Shaparak_Widget_Base {
 				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
 			)
 		);
+		$this->add_control(
+			'title',
+			array(
+				'label'   => 'عنوان بخش',
+				'type'    => \Elementor\Controls_Manager::TEXT,
+				'default' => 'برنامه زمانی',
+			)
+		);
+
 		$this->source_controls();
 		$this->end_controls_section();
 
@@ -87,6 +96,8 @@ class Shaparak_Widget_Event_Timeline extends Shaparak_Widget_Base {
 		}
 
 		$this->open_wrapper();
+		$s = $this->get_settings_for_display();
+		$this->section_title( $s['title'] );
 		echo '<section class="shaparak-comp shaparak-timeline">';
 
 		if ( count( $days ) > 1 ) {

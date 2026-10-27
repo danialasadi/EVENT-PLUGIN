@@ -63,6 +63,15 @@ class Shaparak_Widget_Event_Prizes extends Shaparak_Widget_Base {
 				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
 			)
 		);
+		$this->add_control(
+			'title',
+			array(
+				'label'   => 'عنوان بخش',
+				'type'    => \Elementor\Controls_Manager::TEXT,
+				'default' => 'جوایز',
+			)
+		);
+
 		$this->source_controls();
 		$this->end_controls_section();
 
@@ -104,6 +113,8 @@ class Shaparak_Widget_Event_Prizes extends Shaparak_Widget_Base {
 		$grid_class = 3 === count( $prizes ) ? ' shaparak-prizes__grid--three' : '';
 
 		$this->open_wrapper();
+		$s = $this->get_settings_for_display();
+		$this->section_title( $s['title'] );
 		printf(
 			'<section class="shaparak-comp shaparak-prizes"><div class="shaparak-prizes__grid%s">',
 			esc_attr( $grid_class )

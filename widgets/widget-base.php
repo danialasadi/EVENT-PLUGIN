@@ -71,6 +71,10 @@ abstract class Shaparak_Widget_Base extends \Elementor\Widget_Base {
 	 * @return bool
 	 */
 	protected function shaparak_edit_mode() {
+		// The Elementor preview iframe always carries this query argument.
+		if ( isset( $_GET['elementor-preview'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			return true;
+		}
 		if ( ! class_exists( '\Elementor\Plugin' ) || ! isset( \Elementor\Plugin::$instance->editor ) ) {
 			return false;
 		}
